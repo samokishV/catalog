@@ -13,4 +13,5 @@ exports.seed = async function(knex, Promise) {
 
     await knex("brands")
         .insert(fakeBrands)
+        
 }
