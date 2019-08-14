@@ -1,0 +1,24 @@
+<div class="container">
+    <div class="row">
+        <div class="col-sm-12 row d-flex justify-content-start">
+            {{#each items}}
+                <div class="card m-2" style="width: 16rem;">
+                    <div class="card-body">
+                        <h5 class="card-title">{{this.name}}</h5>
+                        <p class="card-text">Brand: {{this.brand.name}}</p>
+                        <p class="card-text">Type: {{this.type.name}}</p>
+                        <p class="card-text">Sizes:
+                            <ul>
+                                {{#each this.sizes}}
+                                    <li> {{this.value}} </li>
+                                {{/each}}
+                            </ul>
+                        </p>
+                    </div>
+                </div>
+            {{/each}}
+        </div>
+    </div>
+</div>
+
+
