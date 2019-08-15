@@ -2,6 +2,7 @@ import {Entity, PrimaryColumn, Column, ManyToOne, JoinColumn, OneToOne, OneToMan
 import {Brands} from "./Brands";
 import {Types} from "./Types";
 import {Sizes} from "./Sizes";
+import {ClothToSize} from './ClothToSizes';
 
 @Entity({ synchronize: false })
 export class Clothes {
@@ -18,7 +19,7 @@ export class Clothes {
     @Column("int")
     typeId: number;
 
-    @ManyToOne(type => Brands)
+    @ManyToOne(type => Brands, (brand) => brand.clothes)
     @JoinColumn({ name: "brandId" })
     brand: Brands;
 
@@ -26,7 +27,7 @@ export class Clothes {
     @JoinColumn({ name: "typeId" })
     type: Types;
 
-    @ManyToMany(() => Sizes) 
+    @ManyToMany(() => Sizes, sizes => sizes.clothes) 
     @JoinTable({ 
         name: "clothSizes",
         joinColumns: [
@@ -38,4 +39,7 @@ export class Clothes {
     })
     public sizes: Sizes[];
 
+    @OneToMany((type) => ClothToSize, (clothToSizes) => clothToSizes.size)
+    @JoinTable({ name: "clothSizes"})
+    public clothToSizes: ClothToSize[];
 }

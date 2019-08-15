@@ -1,9 +1,9 @@
-import {getConnectionManager} from "typeorm";
+import {getConnectionManager, getConnection, createQueryBuilder} from "typeorm";
 import {Clothes} from "../models/Clothes";
 
-const itemsOnPage = 16;
+const itemsOnPage = 15;
 
-export const getAll = async (page: number = 1, sort: string = "default") => {
+export const getAll = async (keyword: string, brand: string, size : string, page: number = 1, sort: string = "default") => {
     const connection = await getConnectionManager().get("default");
     const catalogRepository = await connection.getRepository(Clothes);
     const limit = itemsOnPage;
@@ -12,13 +12,50 @@ export const getAll = async (page: number = 1, sort: string = "default") => {
     const sortField = sortOptions.field;
     const sortType = sortOptions.type;
 
-    const data = await catalogRepository.find({ 
+    /*
+    const data = await catalogRepository.find({     
         select: ["id", "name"],
-        order : {[sortField] : sortType},
+        where :{ "brand": {id: 10}, "type": {id: 1}},
         relations: ["brand", "type", "sizes"],
+        order : {[sortField] : sortType},
         skip: offset, 
         take: limit 
     });
+    */
+
+    /*
+    const data = await catalogRepository.find({     
+        select: ["id", "name"],
+        relations: ["brand", "clothToSizes", "clothToSizes.size"],
+        order : {[sortField] : sortType},
+        skip: offset, 
+        take: limit 
+    });
+    */
+
+   const query = await createQueryBuilder("clothes", "clothes")
+        .innerJoinAndSelect("clothes.brand", "brand")
+        .innerJoinAndSelect("clothes.type", "type")
+        .innerJoinAndSelect("clothes.sizes", "sizes")
+        .orderBy("sizes.id", "ASC")
+        .skip(offset)
+        .take(limit)
+
+    if(keyword) {
+        query.andWhere("clothes.name = :keyword", {keyword: keyword})
+            .orWhere("brand.name = :keyword", {keyword: keyword})
+            .orWhere("type.name = :keyword", {keyword: keyword})
+    }
+
+    if(brand) {
+        query.andWhere("brand.name = :brand", { brand: brand })
+    }
+
+    if(size) {
+        query.andWhere("sizes.value = :size", { size: size })
+    }
+
+    const data = query.getMany();
 
     return data;
 }
@@ -53,7 +90,7 @@ export const getNextPage = async (page: number = 1) => {
 
 const sortCondition = (order: string) => {
     let sortOptions;
-    if (order!=='default') {
+    if (order) {
         const sort = order.split("-");
         const field : string = sort[0];
         const type : string = sort[1];

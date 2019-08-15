@@ -16,4 +16,5 @@ export const start = (app: express.Application) => {
     app.set('view engine', 'hbs');
 
     app.get("/catalog", CatalogController.index);
+    app.post("/catalog", CatalogController.index);
 };

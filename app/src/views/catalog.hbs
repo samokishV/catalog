@@ -1,6 +1,40 @@
 <div class="container">
     <div class="row">
-        <div class="col-sm-12 row d-flex justify-content-start">
+        <div class="col-md-3">
+            <form method="post">
+                <div class="form-group">
+                    <label for="keyword">Search</label>
+                    <input type="text" class="form-control" id="keyword" name="keyword" value={{keyword}}>
+                </div>
+                <div class="form-group">
+                    <label for="brand">Brands</label>
+                    <select class="form-control" id="brand" name="brand">
+                        <option>{{brand}}</option>
+                        {{#each brands}}  
+                            <option>{{this.name}}</option>
+                        {{/each}}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="size">Size</label>
+                    <select class="form-control" id="size" name="size">
+                        <option>{{size}}</option>
+                        {{#each typeSizes}}
+                        <optgroup label={{this.name}}></optgroup>
+                            {{#each this.sizes}}  
+                                <option>{{this.value}}</option>
+                            {{/each}}
+                        </optgroupt>
+                        {{/each}}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <input type="submit" class="btn btn-success btn-lg w-100" value="Search">
+                </div>
+            </form>
+        </div>
+        <div class="col-md-9 row d-flex justify-content-start">
+            {{#if items}}
             {{#each items}}
                 <div class="card m-2" style="width: 16rem;">
                     <div class="card-body">
@@ -17,7 +51,11 @@
                     </div>
                 </div>
             {{/each}}
+            {{else}}
+                <p>No result was found!</p>
+            {{/if}}
         </div>
+        {{{pagination}}}
     </div>
 </div>
 
