@@ -4,13 +4,17 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "./node_modules/.bin/mocha --require ts-node/register ./test/*.test.ts"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@types/chai": "^4.2.0",
     "@types/circular-json": "^0.4.0",
+    "@types/dotenv": "^6.1.1",
+    "@types/jest": "^24.0.17",
     "body-parser": "^1.19.0",
+    "chai": "^4.2.0",
     "circular-json": "^0.5.9",
     "db-migrate": "^0.11.6",
     "db-migrate-mysql": "^1.1.10",
@@ -18,24 +22,31 @@
     "ejs": "^2.6.2",
     "express": "^4.17.1",
     "express-group-routes": "^1.1.0",
+    "express-reverse": "^0.3.2",
+    "express-validator": "^6.1.1",
     "faker": "^4.1.0",
     "knex": "^0.19.1",
     "lodash": "^4.17.15",
+    "mocha": "^6.2.0",
     "mysql": "^2.17.1",
     "mysql2": "^1.6.5",
     "nodemon": "^1.19.1",
     "reflect-metadata": "^0.1.13",
-    "ts-node": "^8.3.0",
+    "ts-node-register": "^1.0.0",
     "typeorm": "^0.2.18",
     "typescript": "^3.5.3"
   },
   "devDependencies": {
+    "@types/expect": "^1.20.4",
     "@types/express": "^4.17.0",
-    "@types/node": "^12.7.1",
+    "@types/mocha": "^5.2.7",
+    "@types/node": "^12.7.2",
     "eslint": "^5.16.0",
     "eslint-config-airbnb": "^17.1.1",
     "eslint-config-airbnb-base": "^13.2.0",
     "eslint-plugin-import": "^2.18.0",
+    "ts-mocha": "^6.0.0",
+    "ts-node": "^8.3.0",
     "tslint": "^5.18.0"
   }
 }

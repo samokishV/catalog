@@ -1,50 +1,36 @@
-import {getConnectionManager, getConnection, createQueryBuilder} from "typeorm";
+import {getConnectionManager, getConnection, createQueryBuilder, Brackets} from "typeorm";
 import {Clothes} from "../models/Clothes";
 
 const itemsOnPage = 15;
 
-export const getAll = async (keyword: string, brand: string, size : string, page: number = 1, sort: string = "default") => {
-    const connection = await getConnectionManager().get("default");
-    const catalogRepository = await connection.getRepository(Clothes);
+export const getAll = async (keyword: string, brand: string, size : string, sort: string, page: number = 1) => {
     const limit = itemsOnPage;
     const offset = (page - 1)*limit;
     const sortOptions = sortCondition(sort);
     const sortField = sortOptions.field;
     const sortType = sortOptions.type;
 
-    /*
-    const data = await catalogRepository.find({     
-        select: ["id", "name"],
-        where :{ "brand": {id: 10}, "type": {id: 1}},
-        relations: ["brand", "type", "sizes"],
-        order : {[sortField] : sortType},
-        skip: offset, 
-        take: limit 
-    });
-    */
-
-    /*
-    const data = await catalogRepository.find({     
-        select: ["id", "name"],
-        relations: ["brand", "clothToSizes", "clothToSizes.size"],
-        order : {[sortField] : sortType},
-        skip: offset, 
-        take: limit 
-    });
-    */
-
    const query = await createQueryBuilder("clothes", "clothes")
         .innerJoinAndSelect("clothes.brand", "brand")
         .innerJoinAndSelect("clothes.type", "type")
         .innerJoinAndSelect("clothes.sizes", "sizes")
-        .orderBy("sizes.id", "ASC")
+        .where("1 = 1")
         .skip(offset)
         .take(limit)
 
+    if(sortType === "DESC") {   
+        query.orderBy(`clothes.${sortField}`, "DESC")
+    } else {  
+        query.orderBy(`clothes.${sortField}`, "ASC")
+    }
+    
     if(keyword) {
-        query.andWhere("clothes.name = :keyword", {keyword: keyword})
-            .orWhere("brand.name = :keyword", {keyword: keyword})
-            .orWhere("type.name = :keyword", {keyword: keyword})
+        query.andWhere(new Brackets(subQb => {
+            //subQb.where("clothes.name like :name", {name: "%" + keyword +"%"})
+            subQb.where(`MATCH(clothes.name) AGAINST ('${keyword}' IN BOOLEAN MODE)`)
+            subQb.orWhere("brand.name like :brand", {brand: "%" + keyword + "%"})
+            subQb.orWhere("type.name = :type", {type: keyword})
+        }));
     }
 
     if(brand) {
@@ -61,7 +47,7 @@ export const getAll = async (keyword: string, brand: string, size : string, page
 }
 
 export const getTotal = async() => {
-    const connection = await getConnectionManager().get("default");
+    const connection = await getConnectionManager().get("test");
     const catalogRepository = await connection.getRepository(Clothes);
     const data =  await catalogRepository.count();
     return data;
@@ -88,13 +74,13 @@ export const getNextPage = async (page: number = 1) => {
     return nextPage;
 }
 
-const sortCondition = (order: string) => {
+export const sortCondition = (order: string) => {
     let sortOptions;
-    if (order) {
+    if (order && order!=="default") {
         const sort = order.split("-");
         const field : string = sort[0];
-        const type : string = sort[1];
-        sortOptions = {field : field, type : type.toUpperCase()};
+        const type = sort[1];
+        sortOptions = {field: field, type: type.toUpperCase()};
     } else {
         sortOptions = {field: "id", type: "ASC"};
     }

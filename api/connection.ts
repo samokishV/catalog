@@ -1,13 +1,16 @@
-require('dotenv').config({path: '.env'});
+import * as dotenv from "dotenv";
+dotenv.config({path: '.env'});
 
-import {createConnection} from "typeorm";
+import {createConnections} from "typeorm";
 import {Clothes} from "./src/models/Clothes";
 import {Brands} from "./src/models/Brands";
 import {Types} from "./src/models/Types";
 import {Sizes} from "./src/models/Sizes";
 import { ClothToSize } from "./src/models/ClothToSizes";
+import { TypeToSize } from "./src/models/TypeToSizes";
 
-export const connect = async () => await createConnection({
+export const connect = async () => await createConnections([{
+  "name": "default",
   "type": "mysql",
   "host": process.env.DB_HOST,
   "username": process.env.DB_USERNAME,
@@ -20,9 +23,28 @@ export const connect = async () => await createConnection({
       Brands,
       Types,
       Sizes,
-      ClothToSize
+      ClothToSize,
+      TypeToSize
   ]
-}).catch(err => console.log(err));
+}, {
+  "name": "test",
+  "type": "mysql",
+  "host": process.env.DB_HOST,
+  "username": process.env.DB_USERNAME,
+  "password": process.env.DB_PASSWORD,
+  "database": process.env.TEST_DB_NAME,
+  "synchronize": false,
+  "logging": false,
+  "entities": [
+      Clothes,
+      Brands,
+      Types,
+      Sizes,
+      ClothToSize,
+      TypeToSize
+  ]
+}
+]).catch(err => console.log(err));
 
 
 

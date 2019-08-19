@@ -1,10 +1,10 @@
-import {Entity, PrimaryColumn, Column, OneToMany} from "typeorm";
+import {Entity, PrimaryColumn, Column, OneToMany, PrimaryGeneratedColumn} from "typeorm";
 import { Clothes } from "./Clothes";
 
 @Entity({ synchronize: false })
 export class Brands {
 
-    @PrimaryColumn()
+    @PrimaryGeneratedColumn()
     id: number;
 
     @Column("text")

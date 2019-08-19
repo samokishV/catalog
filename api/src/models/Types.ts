@@ -1,10 +1,10 @@
-import {Entity, PrimaryColumn, Column, ManyToOne, JoinColumn, OneToMany, ManyToMany, JoinTable} from "typeorm";
+import {Entity, PrimaryColumn, Column, ManyToOne, JoinColumn, OneToMany, ManyToMany, JoinTable, PrimaryGeneratedColumn} from "typeorm";
 import { Sizes } from "./Sizes";
 
 @Entity({ synchronize: false })
 export class Types {
 
-    @PrimaryColumn()
+    @PrimaryGeneratedColumn()
     id: number;
 
     @Column("text")

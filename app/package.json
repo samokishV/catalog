@@ -13,15 +13,18 @@
     "dotenv": "^8.0.0",
     "ejs": "^2.6.2",
     "express": "^4.17.1",
+    "express-form": "^0.12.6",
     "express-group-routes": "^1.1.0",
     "express-handlebars": "^3.1.0",
+    "express-validator": "^6.1.1",
     "hbs": "^4.0.4",
     "lodash": "^4.17.15",
     "nodemon": "^1.19.1",
     "pagination": "^0.4.6",
     "requestify": "^0.2.5",
     "ts-node": "^8.3.0",
-    "typescript": "^3.5.3"
+    "typescript": "^3.5.3",
+    "xregexp": "^4.2.4"
   },
   "devDependencies": {
     "@types/express": "^4.17.0",

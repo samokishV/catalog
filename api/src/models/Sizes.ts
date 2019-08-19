@@ -1,19 +1,13 @@
-import {Entity, PrimaryColumn, Column, ManyToOne, JoinColumn, OneToMany, ManyToMany, JoinTable} from "typeorm";
+import {Entity, PrimaryColumn, Column, ManyToOne, JoinColumn, OneToMany, ManyToMany, JoinTable, PrimaryGeneratedColumn} from "typeorm";
 import { ClothToSize } from "./ClothToSizes";
 import { Clothes } from "./Clothes";
 
 @Entity({ synchronize: false })
 export class Sizes {
 
-    @PrimaryColumn()
+    @PrimaryGeneratedColumn()
     id: number;
 
     @Column("text")
     value: string;
-
-    @OneToMany((type) => ClothToSize, (clothToSize) => clothToSize.cloth)
-    public clothToSizes: ClothToSize[];
-
-    @ManyToMany(() => Clothes, (clothes) => clothes.sizes)
-    clothes: Clothes[];
 }

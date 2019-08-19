@@ -1,28 +1,47 @@
 <div class="container">
     <div class="row">
         <div class="col-md-3">
-            <form method="post">
+            <form method="post" name="search" class="search-form needs-validation" novalidate>
+                <div class="form-group">
+                    <label for="brand">Order by: </label>
+                    <select class="form-control" id="order" name="order">
+                        <option value="default" {{#equal order "default"}} selected {{/equal}}>Default</option>
+                        <option value="name-asc" {{#equal order "name-asc"}} selected {{/equal}}>Name A-Z</option>
+                        <option value="name-desc" {{#equal order "name-desc"}} selected {{/equal}}>Name Z-A</option>
+                    </select>
+                </div>
                 <div class="form-group">
                     <label for="keyword">Search</label>
-                    <input type="text" class="form-control" id="keyword" name="keyword" value={{keyword}}>
+                    <input type="text" class="form-control
+                    {{#if errors}}
+                        {{#each errors}}
+                            {{#equal this.param 'keyword'}}
+                                is-invalid
+                            {{/equal}}
+                        {{/each}}
+                    {{/if}}
+                    " id="keyword" name="keyword" value="{{keyword}}">
+                    <div class="invalid-feedback">
+                        Keyword must be alphanumeric, and can contain underscores
+                    </div>
                 </div>
                 <div class="form-group">
                     <label for="brand">Brands</label>
                     <select class="form-control" id="brand" name="brand">
-                        <option>{{brand}}</option>
+                        <option> </option>
                         {{#each brands}}  
-                            <option>{{this.name}}</option>
+                            <option {{#equal this.name ../brand}} selected {{/equal}}>{{this.name}}</option>
                         {{/each}}
                     </select>
                 </div>
                 <div class="form-group">
                     <label for="size">Size</label>
                     <select class="form-control" id="size" name="size">
-                        <option>{{size}}</option>
+                        <option> </option>
                         {{#each typeSizes}}
                         <optgroup label={{this.name}}></optgroup>
-                            {{#each this.sizes}}  
-                                <option>{{this.value}}</option>
+                            {{#each this.sizes}} 
+                                <option {{#equal this.value ../../size}} selected {{/equal}}>{{this.value}}</option>
                             {{/each}}
                         </optgroupt>
                         {{/each}}
@@ -35,22 +54,22 @@
         </div>
         <div class="col-md-9 row d-flex justify-content-start">
             {{#if items}}
-            {{#each items}}
-                <div class="card m-2" style="width: 16rem;">
-                    <div class="card-body">
-                        <h5 class="card-title">{{this.name}}</h5>
-                        <p class="card-text">Brand: {{this.brand.name}}</p>
-                        <p class="card-text">Type: {{this.type.name}}</p>
-                        <p class="card-text">Sizes:
-                            <ul>
-                                {{#each this.sizes}}
-                                    <li> {{this.value}} </li>
-                                {{/each}}
-                            </ul>
-                        </p>
+                {{#each items}}
+                    <div class="card m-2" style="width: 16rem;">
+                        <div class="card-body">
+                            <h5 class="card-title">{{this.name}}</h5>
+                            <p class="card-text">Brand: {{this.brand.name}}</p>
+                            <p class="card-text">Type: {{this.type.name}}</p>
+                            <p class="card-text">Sizes:
+                                <ul>
+                                    {{#each this.sizes}}
+                                        <li> {{this.value}} </li>
+                                    {{/each}}
+                                </ul>
+                            </p>
+                        </div>
                     </div>
-                </div>
-            {{/each}}
+                {{/each}}
             {{else}}
                 <p>No result was found!</p>
             {{/if}}

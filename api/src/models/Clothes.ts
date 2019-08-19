@@ -1,4 +1,4 @@
-import {Entity, PrimaryColumn, Column, ManyToOne, JoinColumn, OneToOne, OneToMany, ManyToMany, JoinTable, CreateDateColumn, UpdateDateColumn} from "typeorm";
+import {Entity, PrimaryColumn, Column, ManyToOne, JoinColumn, OneToOne, OneToMany, ManyToMany, JoinTable, CreateDateColumn, UpdateDateColumn, PrimaryGeneratedColumn} from "typeorm";
 import {Brands} from "./Brands";
 import {Types} from "./Types";
 import {Sizes} from "./Sizes";
@@ -7,7 +7,7 @@ import {ClothToSize} from './ClothToSizes';
 @Entity({ synchronize: false })
 export class Clothes {
 
-    @PrimaryColumn()
+    @PrimaryGeneratedColumn()
     id: number;
 
     @Column("text")
@@ -27,7 +27,7 @@ export class Clothes {
     @JoinColumn({ name: "typeId" })
     type: Types;
 
-    @ManyToMany(() => Sizes, sizes => sizes.clothes) 
+    @ManyToMany(() => Sizes) 
     @JoinTable({ 
         name: "clothSizes",
         joinColumns: [
@@ -38,8 +38,4 @@ export class Clothes {
         ]
     })
     public sizes: Sizes[];
-
-    @OneToMany((type) => ClothToSize, (clothToSizes) => clothToSizes.size)
-    @JoinTable({ name: "clothSizes"})
-    public clothToSizes: ClothToSize[];
 }

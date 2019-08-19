@@ -12,12 +12,4 @@ export class ClothToSize {
 
     @Column("int")
     public sizeId: number;
-
-    @ManyToOne(type => Clothes, cloth => cloth.clothToSizes)
-    @JoinColumn({ name: "clothId" })
-    public cloth: Clothes;
-
-    @ManyToOne(type => Sizes, size => size.clothToSizes)
-    @JoinColumn({ name: "sizeId" })
-    public size: Sizes;
 }
