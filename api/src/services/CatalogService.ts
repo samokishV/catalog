@@ -11,18 +11,13 @@ export const getAll = async (keyword: string, brand: string, size : string, sort
     const sortType = sortOptions.type;
 
    const query = await createQueryBuilder("clothes", "clothes")
-        .innerJoinAndSelect("clothes.brand", "brand")
-        .innerJoinAndSelect("clothes.type", "type")
-        .innerJoinAndSelect("clothes.sizes", "sizes")
+        .select(['clothes.id', 'clothes.name', 'brand', 'type', 'sizes'])
+        .innerJoin("clothes.brand", "brand")
+        .innerJoin("clothes.type", "type")
+        .innerJoin("clothes.sizes", "sizes")
         .where("1 = 1")
         .skip(offset)
         .take(limit)
-
-    if(sortType === "DESC") {   
-        query.orderBy(`clothes.${sortField}`, "DESC")
-    } else {  
-        query.orderBy(`clothes.${sortField}`, "ASC")
-    }
     
     if(keyword) {
         query.andWhere(new Brackets(subQb => {
@@ -44,6 +39,14 @@ export const getAll = async (keyword: string, brand: string, size : string, sort
                 .leftJoin("clothes.sizes", "sizes")
                 .where("value = :size", { size: size })
                 .getQuery())
+    }
+
+    query.orderBy('sizes.value', 'ASC');
+
+    if(sortType === "DESC") {   
+        query.addOrderBy(`clothes.${sortField}`, "DESC")
+    } else {  
+        query.addOrderBy(`clothes.${sortField}`, "ASC")
     }
 
     const data = query.getMany();
