@@ -26,10 +26,9 @@ export const getAll = async (keyword: string, brand: string, size : string, sort
     
     if(keyword) {
         query.andWhere(new Brackets(subQb => {
-            //subQb.where("clothes.name like :name", {name: "%" + keyword +"%"})
             subQb.where(`MATCH(clothes.name) AGAINST ('${keyword}' IN BOOLEAN MODE)`)
-            subQb.orWhere("brand.name like :brand", {brand: "%" + keyword + "%"})
-            subQb.orWhere("type.name = :type", {type: keyword})
+                .orWhere("brand.name like :brand", {brand: "%" + keyword + "%"})
+                .orWhere("type.name = :type", {type: keyword})
         }));
     }
 
@@ -38,7 +37,13 @@ export const getAll = async (keyword: string, brand: string, size : string, sort
     }
 
     if(size) {
-        query.andWhere("sizes.value = :size", { size: size })
+        query.andWhere("clothes.id IN " + 
+            query.subQuery()
+                .select("clothId")
+                .from("clothes", "clothes")
+                .leftJoin("clothes.sizes", "sizes")
+                .where("value = :size", { size: size })
+                .getQuery())
     }
 
     const data = query.getMany();
