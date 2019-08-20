@@ -5,13 +5,18 @@ import { Clothes } from '../src/models/Clothes';
 
 import CatalogService = require('../src/services/CatalogService');
 import mysql = require('../connection');
+import * as dotenv from 'dotenv';
+
+dotenv.config({ path: '.env' });
+
+const baseURL = process.env.APP_BASE_URL;
 
 describe('CatalogService Tests', () => {
   describe('#getPrevPage()', () => {
     it('should return previous page link', () => {
       const tests = [
         { args: 1, expected: '' },
-        { args: 2, expected: 'http://localhost:1000/api/catalog?p=1' },
+        { args: 2, expected: `${baseURL}/api/catalog?p=1` },
       ];
 
       tests.forEach((test) => {
@@ -54,7 +59,7 @@ describe('CatalogService Tests', () => {
     describe('#getNextPage()', () => {
       it('should return next page link', () => {
         const tests = [
-          { args: 1, expected: 'http://localhost:1000/api/catalog?p=2' },
+          { args: 1, expected: `${baseURL}/api/catalog?p=2` },
           { args: 2, expected: '' },
         ];
 

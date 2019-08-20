@@ -1,7 +1,11 @@
 import { getConnectionManager, createQueryBuilder, Brackets } from 'typeorm';
 import { Clothes } from '../models/Clothes';
+import * as dotenv from 'dotenv';
+
+dotenv.config({ path: '.env' });
 
 const itemsOnPage = 15;
+const baseURL = process.env.APP_BASE_URL;
 
 export const getAll = async (keyword: string, brand: string, size: string, sort: string, page = 1) => {
   const limit = itemsOnPage;
@@ -70,7 +74,7 @@ export const countPages = async () => {
 export const getPrevPage = (page = 1) => {
   if (page == 1) return '';
   const prev = --page;
-  const prevPage = `http://localhost:1000/api/catalog?p=${prev}`;
+  const prevPage = `${baseURL}/api/catalog?p=${prev}`;
   return prevPage;
 };
 
@@ -78,7 +82,7 @@ export const getNextPage = async (page = 1) => {
   const totalPages = await countPages();
   if (page == totalPages) return '';
   const next = ++page;
-  const nextPage = `http://localhost:1000/api/catalog?p=${next}`;
+  const nextPage = `${baseURL}/api/catalog?p=${next}`;
   return nextPage;
 };
 
