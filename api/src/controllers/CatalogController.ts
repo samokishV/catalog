@@ -1,5 +1,6 @@
+import { Response, Request, NextFunction } from 'express';
+
 import CatalogService = require('../services/CatalogService');
-import { Response, Request, NextFunction } from "express";
 
 /**
  * @OA\Post(
@@ -65,20 +66,21 @@ import { Response, Request, NextFunction } from "express";
  */
 export const index = async (req: Request, res: Response) => {
   const page = req.query.page || 1;
-  const sort = req.query.sort;
-  const keyword = req.query.keyword;
-  const brand = req.query.brand;
-  const size = req.query.size;
+  const { sort } = req.query;
+  const { keyword } = req.query;
+  const { brand } = req.query;
+  const { size } = req.query;
   const items = await CatalogService.getAll(keyword, brand, size, sort, page);
   const total = await CatalogService.getTotal();
   const pageCount = await CatalogService.countPages();
   const nextPage = await CatalogService.getNextPage(page);
   const prevPage = CatalogService.getPrevPage(page);
-    
-  if(items.length > 0) {
-    return res.send({"itemCount": items.length, "total": total, "pageCount": pageCount, "items": items, "previous": prevPage,"next": nextPage});
-  }
-  
-  return res.status(404).send(`Data not found`);
-}; 
 
+  if (items.length > 0) {
+    return res.send({
+      itemCount: items.length, total, pageCount, items, previous: prevPage, next: nextPage,
+    });
+  }
+
+  return res.status(404).send('Data not found');
+};

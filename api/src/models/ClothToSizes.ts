@@ -1,15 +1,17 @@
-import { Entity, Column, ManyToOne, PrimaryGeneratedColumn, JoinColumn } from "typeorm";
-import { Clothes } from "./Clothes";
-import { Sizes } from "./Sizes";
+import {
+  Entity, Column, ManyToOne, PrimaryGeneratedColumn, JoinColumn,
+} from 'typeorm';
+import { Clothes } from './Clothes';
+import { Sizes } from './Sizes';
 
-@Entity({name: "clothSizes"})
+@Entity({ name: 'clothSizes' })
 export class ClothToSize {
     @PrimaryGeneratedColumn()
     public id: number;
 
-    @Column("int")
+    @Column('int')
     public clothId: number;
 
-    @Column("int")
+    @Column('int')
     public sizeId: number;
 }

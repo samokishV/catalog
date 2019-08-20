@@ -1,40 +1,36 @@
-const _ = require("lodash");
-const faker = require("faker");
+const _ = require('lodash');
+const faker = require('faker');
 
-exports.seed = async function(knex, Promise) {
-    const fakeClothSizes = [];
-    const desiredFakeClothes = 100125;
+exports.seed = async function (knex, Promise) {
+  const fakeClothSizes = [];
+  const desiredFakeClothes = 100125;
 
-    const firstClothId = await knex('clothes').offset(0).limit(1)
-        .then(result => result[0].id);
+  const firstClothId = await knex('clothes').offset(0).limit(1)
+    .then(result => result[0].id);
 
-    for(let i = 0; i < desiredFakeClothes; i++) {
-        const typeId = await knex('clothes').where(function() {
-            this.where('id', firstClothId+i);
-        }).then(result => {
-            return result[0].typeId;
-        });
+  for (let i = 0; i < desiredFakeClothes; i++) {
+    const typeId = await knex('clothes').where(function () {
+      this.where('id', firstClothId + i);
+    }).then(result => result[0].typeId);
 
-        const sizesIds = await knex('typeSizes').where(function() {
-            this.where('typeId', typeId);
-        }).then(result => {
-            const ids = _.map(result, 'id');
-            return ids;
-        });
+    const sizesIds = await knex('typeSizes').where(function () {
+      this.where('typeId', typeId);
+    }).then((result) => {
+      const ids = _.map(result, 'id');
+      return ids;
+    });
 
-        const sizesLen = sizesIds.length; 
-        const range = _.range(1, sizesLen, 1);
-        const randomSizesLen = _.sample(range); 
-        const randomSizes = _.sampleSize(sizesIds, randomSizesLen);
+    const sizesLen = sizesIds.length;
+    const range = _.range(1, sizesLen, 1);
+    const randomSizesLen = _.sample(range);
+    const randomSizes = _.sampleSize(sizesIds, randomSizesLen);
 
-        for(let j=0; j<randomSizesLen; j++) {
-            fakeClothSizes.push({clothId: firstClothId+i, sizeId: randomSizes[j]});
-        }
+    for (let j = 0; j < randomSizesLen; j++) {
+      fakeClothSizes.push({ clothId: firstClothId + i, sizeId: randomSizes[j] });
     }
+  }
 
-    return knex('clothSizes').del()
-        .then(async () => {
-            return await knex("clothSizes")
-                .insert(fakeClothSizes) 
-        });
-}
+  return knex('clothSizes').del()
+    .then(async () => await knex('clothSizes')
+      .insert(fakeClothSizes));
+};

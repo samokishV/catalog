@@ -1,13 +1,13 @@
-import { Entity, Column, PrimaryGeneratedColumn} from "typeorm";
+import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity({name: "typeSizes"})
+@Entity({ name: 'typeSizes' })
 export class TypeToSize {
     @PrimaryGeneratedColumn()
     public id: number;
 
-    @Column("int")
+    @Column('int')
     public typeId: number;
 
-    @Column("int")
+    @Column('int')
     public sizeId: number;
 }

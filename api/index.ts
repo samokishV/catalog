@@ -1,4 +1,4 @@
-require('dotenv').config({path: '.env'});
+require('dotenv').config({ path: '.env' });
 require('express-group-routes');
 
 import mysql = require('./connection');

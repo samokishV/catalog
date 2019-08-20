@@ -1,7 +1,5 @@
-const requestify = require('requestify'); 
+const requestify = require('requestify');
 
-export const findAll = () => {  
-  return requestify
-  .get(`http://localhost:1000/api/brands`)
-  .then(response => response.getBody())
-}
+export const findAll = () => requestify
+  .get('http://localhost:1000/api/brands')
+  .then(response => response.getBody());

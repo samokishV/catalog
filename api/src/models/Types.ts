@@ -1,24 +1,25 @@
-import {Entity, PrimaryColumn, Column, ManyToOne, JoinColumn, OneToMany, ManyToMany, JoinTable, PrimaryGeneratedColumn} from "typeorm";
-import { Sizes } from "./Sizes";
+import {
+  Entity, PrimaryColumn, Column, ManyToOne, JoinColumn, OneToMany, ManyToMany, JoinTable, PrimaryGeneratedColumn,
+} from 'typeorm';
+import { Sizes } from './Sizes';
 
 @Entity({ synchronize: false })
 export class Types {
-
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column("text")
+    @Column('text')
     name: string;
 
-    @ManyToMany(() => Sizes) 
-    @JoinTable({ 
-        name: "typeSizes",
-        joinColumns: [
-            { name: 'typeId' }
-        ],
-        inverseJoinColumns: [
-            { name: 'sizeId' }
-        ]
+    @ManyToMany(() => Sizes)
+    @JoinTable({
+      name: 'typeSizes',
+      joinColumns: [
+        { name: 'typeId' },
+      ],
+      inverseJoinColumns: [
+        { name: 'sizeId' },
+      ],
     })
     public sizes: Sizes[];
 }

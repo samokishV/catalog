@@ -1,7 +1,5 @@
-$(document).ready(function() {
-
-    $("[name='order']").on('change', function() {
-        document.forms['search'].submit();
-    });
-
+$(document).ready(() => {
+  $("[name='order']").on('change', () => {
+    document.forms.search.submit();
+  });
 });

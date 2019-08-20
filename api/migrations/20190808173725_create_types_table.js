@@ -1,12 +1,12 @@
 
-exports.up = function(knex) {
-    return knex.schema.createTable('types', function (t) {
-        t.increments('id').primary()
-        t.string('name').notNullable()
-        t.timestamps(true, true)
-      })
+exports.up = function (knex) {
+  return knex.schema.createTable('types', (t) => {
+    t.increments('id').primary();
+    t.string('name').notNullable();
+    t.timestamps(true, true);
+  });
 };
 
-exports.down = function(knex) {
-    return knex.schema.dropTableIfExists('types')
+exports.down = function (knex) {
+  return knex.schema.dropTableIfExists('types');
 };
