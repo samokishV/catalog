@@ -20,6 +20,8 @@ export const start = (app: express.Application) => {
     app.set('views', __dirname + '/src/views');  
     app.set('view engine', 'hbs');
 
+    app.use(express.static(__dirname + '/src/public'));
+
     app.get("/catalog", CatalogController.index);
     app.post("/catalog", searchRequest.search, CatalogController.index);
 };

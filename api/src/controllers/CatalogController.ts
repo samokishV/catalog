@@ -64,7 +64,6 @@ import { Response, Request, NextFunction } from "express";
  * )
  */
 export const index = async (req: Request, res: Response) => {
-  console.log(req.body);
   const page = req.body.p || 1;
   const sort = req.body.sort;
   const keyword = req.body.keyword;
