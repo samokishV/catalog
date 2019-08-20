@@ -10,7 +10,7 @@ export const getAll = async (keyword: string, brand: string, size : string, sort
     const sortField = sortOptions.field;
     const sortType = sortOptions.type;
 
-   const query = await createQueryBuilder("clothes", "clothes")
+    const query = await createQueryBuilder("clothes", "clothes")
         .select(['clothes.id', 'clothes.name', 'brand', 'type', 'sizes'])
         .innerJoin("clothes.brand", "brand")
         .innerJoin("clothes.type", "type")
@@ -55,7 +55,7 @@ export const getAll = async (keyword: string, brand: string, size : string, sort
 }
 
 export const getTotal = async() => {
-    const connection = await getConnectionManager().get("test");
+    const connection = await getConnectionManager().get("default");
     const catalogRepository = await connection.getRepository(Clothes);
     const data =  await catalogRepository.count();
     return data;

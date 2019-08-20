@@ -10,8 +10,8 @@ import { Response, Request, NextFunction } from "express";
  *     description="",
  *     @OA\Parameter(
  *         description="Catalog page",
- *         in="body",
- *         name="p",
+ *         in="query",
+ *         name="page",
  *         required=false,
  *         @OA\Schema(
  *              type="integer"
@@ -19,7 +19,7 @@ import { Response, Request, NextFunction } from "express";
  *     ),
  *     @OA\Parameter(
  *         description="Sort type",
- *         in="body",
+ *         in="query",
  *         name="sort",
  *         required=false,
  *         @OA\Schema(
@@ -28,7 +28,7 @@ import { Response, Request, NextFunction } from "express";
  *     ),
  *     @OA\Parameter(
  *         description="Search string",
- *         in="body",
+ *         in="query",
  *         name="keyword",
  *         required=false,
  *         @OA\Schema(
@@ -37,7 +37,7 @@ import { Response, Request, NextFunction } from "express";
  *     ),
  *     @OA\Parameter(
  *         description="Clothes brand",
- *         in="body",
+ *         in="query",
  *         name="brand",
  *         required=false,
  *         @OA\Schema(
@@ -46,7 +46,7 @@ import { Response, Request, NextFunction } from "express";
  *     ),
  *     @OA\Parameter(
  *         description="Clothes size",
- *         in="body",
+ *         in="query",
  *         name="size",
  *         required=false,
  *         @OA\Schema(
@@ -64,11 +64,11 @@ import { Response, Request, NextFunction } from "express";
  * )
  */
 export const index = async (req: Request, res: Response) => {
-  const page = req.body.p || 1;
-  const sort = req.body.sort;
-  const keyword = req.body.keyword;
-  const brand = req.body.brand;
-  const size = req.body.size;
+  const page = req.query.page || 1;
+  const sort = req.query.sort;
+  const keyword = req.query.keyword;
+  const brand = req.query.brand;
+  const size = req.query.size;
   const items = await CatalogService.getAll(keyword, brand, size, sort, page);
   const total = await CatalogService.getTotal();
   const pageCount = await CatalogService.countPages();

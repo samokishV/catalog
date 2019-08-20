@@ -1,17 +1,9 @@
+// @ts-ignore
 const requestify = require('requestify'); 
 
-export const findAll = (keyword: string, brand: string, size: string, page:number, sort:string) => {
+export const findAll = (keyword: string, brand: string, size: string, page:number, sort:string, params: string) => {
   return requestify
-  .request("http://localhost:1000/api/catalog", {
-    method: 'POST',
-    body: {
-      page: page,
-      sort: sort,
-      keyword: keyword,
-      brand: brand,
-      size:size,
-    },
-    dataType: 'form-url-encoded'
-  }).then(response => response.getBody()) 
+  .request(`http://localhost:1000/api/catalog${params}&page=${page}`, {method: 'GET'})
+  .then(response => response.getBody()) 
   .catch(err => console.log(err)) 
 }

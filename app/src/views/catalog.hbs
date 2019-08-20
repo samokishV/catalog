@@ -1,7 +1,10 @@
 <div class="container">
+    <div class="row justify-content-center">
+        {{{pagination}}}
+    </div>
     <div class="row">
         <div class="col-md-3">
-            <form method="post" name="search" class="search-form needs-validation" novalidate>
+            <form action="/catalog/search" method="post" name="search" class="search-form needs-validation" novalidate>
                 <div class="form-group">
                     <label for="brand">Order by: </label>
                     <select class="form-control" id="order" name="order">
@@ -74,6 +77,8 @@
                 <p>No result was found!</p>
             {{/if}}
         </div>
+    </div>
+    <div class="row justify-content-center">
         {{{pagination}}}
     </div>
 </div>
