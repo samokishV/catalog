@@ -19,9 +19,7 @@ export const getAll = async (keyword: string, brand: string, size: string, sort:
     .innerJoin('clothes.brand', 'brand')
     .innerJoin('clothes.type', 'type')
     .innerJoin('clothes.sizes', 'sizes')
-    .where('1 = 1')
-    .skip(offset)
-    .take(limit);
+    .where('1 = 1');
 
   if (keyword) {
     query.andWhere(`( MATCH(clothes.name) AGAINST ('${keyword}') OR brand.name like :name OR type.name like :name )`, {name: '%' + keyword + '%'});
@@ -41,15 +39,18 @@ export const getAll = async (keyword: string, brand: string, size: string, sort:
         .getQuery()}`);
   }
 
-  query.orderBy('sizes.value', 'ASC');
-
   if (sortType === 'DESC') {
-    query.addOrderBy(`clothes.${sortField}`, 'DESC');
+    query.orderBy(`clothes.${sortField}`, 'DESC');
   } else {
-    query.addOrderBy(`clothes.${sortField}`, 'ASC');
+    query.orderBy(`clothes.${sortField}`, 'ASC');
   }
 
-  const data = query.getMany();
+  query.addOrderBy('sizes.value', 'ASC');
+
+  const data = query
+    .skip(offset)
+    .take(limit)
+    .getMany();
 
   return data;
 };

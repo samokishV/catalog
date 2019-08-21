@@ -2,7 +2,7 @@ import { getConnectionManager } from 'typeorm';
 import { Types } from '../models/Types';
 
 export const getAll = async () => {
-  const connection = await getConnectionManager().get('default');
+  const connection = await getConnectionManager().get();
 
   const TypesRepository = await connection.getRepository(Types);
 

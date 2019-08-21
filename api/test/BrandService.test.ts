@@ -8,12 +8,18 @@ import mysql = require('../connection');
 
 describe('BrandService Tests', () => {
   describe('#getAll()', () => {
-    const brands = [{ id: 1, name: 'Foo' }, { id: 2, name: 'Bar' }, { id: 3, name: 'Rizz' }, { id: 4, name: 'Rak' }];
+    const brands = [
+      { id: 1, name: 'Foo' }, 
+      { id: 2, name: 'Bar' }, 
+      { id: 3, name: 'Rizz' }, 
+      { id: 4, name: 'Rak' }
+    ];
+    
     let expected: Array<Brands>;
 
     before(async () => {
       await mysql.connect();
-      const connection = await getConnection('test');
+      const connection = await getConnection();
       await connection.manager.getRepository(Brands).delete({});
 
       await connection.manager
@@ -33,5 +39,11 @@ describe('BrandService Tests', () => {
       const result = await BrandService.getAll();
       expect(result).to.eql(expected);
     });
+
+    after(async () => {
+      await mysql.connect();
+      const connection = await getConnection();
+      await connection.manager.getRepository(Brands).delete({});
+    });    
   });
 });

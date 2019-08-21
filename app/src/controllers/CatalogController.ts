@@ -31,7 +31,7 @@ export const index = async (req: Request, res: Response) => {
 
     if (data) {
       items = data.items;
-      const paginator = bootstrapPagination.create('/catalog/search', page, data.itemCount, data.total, params);
+      const paginator = bootstrapPagination.create('/catalog/search', page, 5, data.total, params);
       paginationHTML = paginator.render();
     }
   }
