@@ -24,11 +24,7 @@ export const getAll = async (keyword: string, brand: string, size: string, sort:
     .take(limit);
 
   if (keyword) {
-    query.andWhere(new Brackets((subQb) => {
-      subQb.where(`MATCH(clothes.name) AGAINST ('${keyword}' IN BOOLEAN MODE)`)
-        .orWhere('brand.name like :brand', { brand: `%${keyword}%` })
-        .orWhere('type.name = :type', { type: keyword });
-    }));
+    query.andWhere(`( MATCH(clothes.name) AGAINST ('${keyword}') OR brand.name like :name OR type.name like :name )`, {name: '%' + keyword + '%'});
   }
 
   if (brand) {
@@ -59,7 +55,7 @@ export const getAll = async (keyword: string, brand: string, size: string, sort:
 };
 
 export const getTotal = async () => {
-  const connection = await getConnectionManager().get('default');
+  const connection = await getConnectionManager().get();
   const catalogRepository = await connection.getRepository(Clothes);
   const data = await catalogRepository.count();
   return data;
