@@ -3,67 +3,45 @@ import { Response, Request, NextFunction } from 'express';
 import CatalogService = require('../services/CatalogService');
 
 /**
- * @OA\Post(
- *     path="/api/catalog",
- *     tags={"clothes"},
- *     operationId="index",
- *     summary="Finds all clothes in catalog",
- *     description="",
- *     @OA\Parameter(
- *         description="Catalog page",
- *         in="query",
- *         name="page",
- *         required=false,
- *         @OA\Schema(
- *              type="integer"
- *          )
- *     ),
- *     @OA\Parameter(
- *         description="Sort type",
- *         in="query",
- *         name="sort",
- *         required=false,
- *         @OA\Schema(
- *              type="string"
- *          )
- *     ),
- *     @OA\Parameter(
- *         description="Search string",
- *         in="query",
- *         name="keyword",
- *         required=false,
- *         @OA\Schema(
- *              type="string"
- *          )
- *     ),
- *     @OA\Parameter(
- *         description="Clothes brand",
- *         in="query",
- *         name="brand",
- *         required=false,
- *         @OA\Schema(
- *              type="string"
- *          )
- *     ),
- *     @OA\Parameter(
- *         description="Clothes size",
- *         in="query",
- *         name="size",
- *         required=false,
- *         @OA\Schema(
- *              type="string"
- *          )
- *     ),
- *     @OA\Response(
- *         response=200,
- *         description="successful operation",
- *     ),
- *     @OA\Response(
- *         response=404,
- *         description="Data not found",
- *     ),
- * )
- */
+ * @swagger
+ *
+ * /api/catalog:
+ *   get:
+ *     description: Find all clothes in catalog
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - name: page
+ *         description: Catalog page.
+ *         in: query
+ *         required: false
+ *         type: integer
+ *       - name: sort
+ *         description: Sort type.
+ *         in: query
+ *         required: false
+ *         type: string
+ *       - name: keyword
+ *         description: Search string.
+ *         in: query
+ *         required: false
+ *         type: string
+ *       - name: brand
+ *         description: Clothes brand.
+ *         in: query
+ *         required: false
+ *         type: string 
+ *       - name: size
+ *         description: Clothes size.
+ *         in: query
+ *         required: false
+ *         type: string 
+ *     responses:
+ *       200:
+ *         description: successful operation
+ *       404:
+ *         description: data not found
+ */ 
 export const index = async (req: Request, res: Response) => {
   const page = req.query.page || 1;
   const { sort } = req.query;

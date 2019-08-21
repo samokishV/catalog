@@ -3,21 +3,19 @@ import { Response, Request, NextFunction } from 'express';
 import TypesSizesService = require('../services/TypeSizesService');
 
 /**
- * @OA\Get(
- *     path="/api/types/sizes",
- *     summary="Finds all sizes grouped by type",
- *     tags={"types-sizes"},
- *     operationId="index",
- *     @OA\Response(
- *         response=200,
- *         description="successful operation",
- *     ),
- *     @OA\Response(
- *         response="404",
- *         description="Data not found",
- *     ),
- * )
- */
+ * @swagger
+ *
+ * /api/types/sizes:
+ *   get:
+ *     description: Find all sizes grouped by type
+ *     produces:
+ *       - application/json
+ *     responses:
+ *       200:
+ *         description: successful operation
+ *       404:
+ *         description: data not found
+ */ 
 export const index = async (req: Request, res: Response) => {
   const data = await TypesSizesService.getAll();
 
