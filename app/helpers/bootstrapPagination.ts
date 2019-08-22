@@ -1,7 +1,16 @@
 // @ts-ignore
 const pagination = require('pagination');
 
-export const create = function (prelink: string, current: number, rowsPerPage: number, totalResult: number, params: string) {
+/**
+ * 
+ * @param {string} prelink 
+ * @param {number} current 
+ * @param {number} rowsPerPage 
+ * @param {number} totalResult 
+ * @param {string} params
+ * @return {any}
+ */
+export const create = function (prelink: string, current: number, rowsPerPage: number, totalResult: number, params: string):any {
   return new pagination.TemplatePaginator({
     prelink,
     current,

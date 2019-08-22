@@ -27,11 +27,11 @@ export const index = async (req: Request, res: Response) => {
   let paginationHTML;
 
   if (errors.isEmpty()) {
-    const data = await Catalog.findAll(keyword, brand, size, page, sort, params);
+    const data = await Catalog.findAll(page, params);
 
     if (data) {
       items = data.items;
-      const paginator = bootstrapPagination.create('/catalog/search', page, 5, data.total, params);
+      const paginator = bootstrapPagination.create('/catalog/search', page, 15, data.total, params);
       paginationHTML = paginator.render();
     }
   }

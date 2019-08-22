@@ -7,163 +7,182 @@ dotenv.config({ path: '.env' });
 const itemsOnPage = 15;
 const baseURL = process.env.APP_BASE_URL;
 
-/**
- * 
- * @param {string} keyword 
- * @param {string} brand 
- * @param {string} size 
- * @param {string} sort 
- * @param {number} page 
- * @return {Promise<unknown[]>}
- */
-export const getAll = async (keyword: string, brand: string, size: string, sort: string, page: number = 1): Promise<unknown[]> => {
-  const limit = itemsOnPage;
-  const offset = (page - 1) * limit;
-  const sortCondition = getSortCondition('clothes', sort);
+export class CatalogService {
 
-  const data = await createQueryBuilder('clothes', 'clothes')
-    .innerJoinAndSelect('clothes.brand', 'brand')
-    .innerJoinAndSelect('clothes.type', 'type')
-    .innerJoinAndSelect('clothes.sizes', 'sizes')
-    .where('1 = 1')
-    .andWhere((qb : SelectQueryBuilder<Clothes>) : any  => {
-      qb.where('1 = 1');
-      getWhereKeywordQuery(qb, keyword);
-      getWhereBrandQuery(qb, brand);
-      getWhereSizeQuery(qb, size);
-    })
-    .orderBy(sortCondition)
-    .skip(offset)
-    .take(limit)
-    .getMany();
+  keyword: string;
+  brand: string;
+  size: string;
+  sort: string;
+  page: number = 1;
 
-  return data;
-};
-
-/**
- * 
- * @param {SelectQueryBuilder<Clothes>} subQuery 
- * @param {string} keyword 
- * @return {SelectQueryBuilder<Clothes>} | void
- */
-export const getWhereKeywordQuery = (subQuery : SelectQueryBuilder<Clothes>, keyword: string) : SelectQueryBuilder<Clothes> | void =>  {
-  if (keyword) {
-    return subQuery.andWhere(`( MATCH(clothes.name) AGAINST ('${keyword}') OR brand.name like :name OR type.name like :name )`, {name: '%' + keyword + '%'});
-  }
-}
-
-/**
- * 
- * @param {SelectQueryBuilder<Clothes>} subQuery 
- * @param {string} brand
- * @return {SelectQueryBuilder<Clothes>} | void 
- */
-export const getWhereBrandQuery = (subQuery : SelectQueryBuilder<Clothes>, brand: string) : SelectQueryBuilder<Clothes> | void =>  {
-  if (brand) {
-    return subQuery.andWhere('brand.name = :brand', { brand });
-  }
-}
-
-/**
- * 
- * @param {SelectQueryBuilder<Clothes>} subQuery 
- * @param {string} size
- * @return {SelectQueryBuilder<Clothes>} | void 
- */
-export const getWhereSizeQuery = (subQuery : SelectQueryBuilder<Clothes>, size: string) : SelectQueryBuilder<Clothes> | void =>  {
-  if(size) {
-    return subQuery.andWhere(`clothes.id IN ${
-      subQuery.subQuery()
-        .select('clothId')
-        .from('clothes', 'clothes')
-        .leftJoin('clothes.sizes', 's')
-        .where('value = :size', { size })
-        .getQuery()
-      }`);
-  }
-}
-
-/**
- * @return {Promise<number>}
- */
-export const getTotal = async (): Promise<number> => {
-  const connection = await getConnectionManager().get();
-  const catalogRepository = await connection.getRepository(Clothes);
-  const data = await catalogRepository.count();
-  return data;
-};
-
-/**
- * @return {Promise<number>}
- */
-export const countPages = async (): Promise<number> => {
-  const total = await getTotal();
-  const pageCount = total / itemsOnPage;
-  return Math.ceil(pageCount);
-};
-
-/**
- * 
- * @param {number} page
- * @param {string} 
- */
-export const getPrevPage = (page: number = 1): string => {
-  if (page == 1) return '';
-  const prev = --page;
-  const prevPage = `${baseURL}/api/catalog?p=${prev}`;
-  return prevPage;
-};
-
-/**
- * 
- * @param {number} page
- * @return {Promise<string>} 
- */
-export const getNextPage = async (page: number = 1): Promise<string> => {
-  const totalPages = await countPages();
-  if (page == totalPages) return '';
-  const next = ++page;
-  const nextPage = `${baseURL}/api/catalog?p=${next}`;
-  return nextPage;
-};
-
-/**
- * 
- * @param {string} order
- * @return {object} 
- */
-export const getSortParams = (order: string) => {
-  let sortOptions;
-  let field:string = "id"; 
-  let type: "ASC" | "DESC" = "ASC";
-
-  if (order && order !== 'default') {
-    const sort = order.split('-');
-    field = sort[0];
-
-    if(sort[1].toUpperCase()=="DESC") {
-      type = "DESC";
-    } 
+  constructor(keyword: string, brand: string, size: string, sort: string = "default", page: number = 1) {
+      this.keyword = keyword;
+      this.brand = brand;
+      this.size = size;
+      this.sort = sort;
+      this.page = page;
   }
 
-  sortOptions = { field: field, type: type };
-  return sortOptions;
-};
+  /**
+   * @return {Promise<unknown[]>}
+   */
+  async getLimit(): Promise<unknown[]>  {
+    const limit = itemsOnPage;
+    const offset = (this.page - 1) * limit;
 
-/**
- * 
- * @param {string} tableAlias 
- * @param {string} order
- * @return {OrderByCondition} 
- */
-export const getSortCondition = (tableAlias: string, order: string) => {
-  const sortOptions = getSortParams(order);
-  const sortField = sortOptions.field;
-  const sortType = sortOptions.type;
+    console.log("limit"+limit+"offset"+offset);
 
-  const field: string = `${tableAlias}.${sortField}`;
-  const type:"ASC" | "DESC" = sortType;
+    const query = await this.getAllQuery();
+    const data = query    
+      .skip(offset)
+      .take(limit)
+      .getMany();
 
-  const sortCond: OrderByCondition = {'sizes.value': 'ASC', [field]: type};
-  return sortCond;
+    return data;
+  }
+
+  /**
+   * @return {Promise<SelectQueryBuilder<unknown>>}
+   */
+  async getAllQuery(): Promise<SelectQueryBuilder<unknown>> {
+    const sortCondition = this.getSortCondition('clothes');
+
+    const query = await createQueryBuilder('clothes', 'clothes')
+      .innerJoinAndSelect('clothes.brand', 'brand')
+      .innerJoinAndSelect('clothes.type', 'type')
+      .innerJoinAndSelect('clothes.sizes', 'sizes')
+      .where('1 = 1')
+      .andWhere((qb : SelectQueryBuilder<Clothes>) : any  => {
+        qb.where('1 = 1');
+        this.getWhereKeywordQuery(qb);
+        this.getWhereBrandQuery(qb);
+        this.getWhereSizeQuery(qb);
+      })
+      .orderBy(sortCondition);
+
+    return query;
+  };
+
+  /**
+   * 
+   * @param {SelectQueryBuilder<Clothes>} subQuery 
+   * @return {SelectQueryBuilder<Clothes>} | void
+   */
+    getWhereKeywordQuery(subQuery : SelectQueryBuilder<Clothes>) : SelectQueryBuilder<Clothes> | void  {
+      if (this.keyword) {
+        return subQuery.andWhere(`( MATCH(clothes.name) AGAINST ('${this.keyword}') OR brand.name like :name OR type.name like :name )`, {name: '%' + this.keyword + '%'});
+      }
+    }
+
+  /**
+   * 
+   * @param {SelectQueryBuilder<Clothes>} subQuery 
+   * @return {SelectQueryBuilder<Clothes>} | void 
+   */
+  getWhereBrandQuery(subQuery : SelectQueryBuilder<Clothes>) : SelectQueryBuilder<Clothes> | void  {
+    if (this.brand) {
+      return subQuery.andWhere('brand.name = :brand', { brand: this.brand });
+    }
+  }
+
+  /**
+   * 
+   * @param {SelectQueryBuilder<Clothes>} subQuery 
+   * @return {SelectQueryBuilder<Clothes>} | void 
+   */
+  getWhereSizeQuery(subQuery : SelectQueryBuilder<Clothes>) : SelectQueryBuilder<Clothes> | void {
+    if(this.size) {
+      return subQuery.andWhere(`clothes.id IN ${
+        subQuery.subQuery()
+          .select('clothId')
+          .from('clothes', 'clothes')
+          .leftJoin('clothes.sizes', 's')
+          .where('value = :size', { size: this.size })
+          .getQuery()
+        }`);
+    }
+  }
+
+  /**
+   * @return {Promise<number>}
+   */
+  async getTotal(): Promise<number> {
+    const query = await this.getAllQuery();
+    const data = query.getCount();
+    return data;
+  };
+
+  /**
+   * @return {Promise<number>}
+   */
+  async countPages(): Promise<number> {
+    const total = await this.getTotal();
+    const pageCount = total / itemsOnPage;
+    return Math.ceil(pageCount);
+  };  
+
+  /**
+   * @return {string} 
+   */
+  getPrevPage(): string {
+    if (this.page == 1) return '';
+    let page = this.page;
+    const prev = --page;
+    const prevPage = `${baseURL}/api/catalog?p=${prev}`;
+    return prevPage;
+  };
+
+  /**
+   * @return {Promise<string>} 
+   */
+  async getNextPage(): Promise<string> {
+    const totalPages = await this.countPages();
+    if (this.page == totalPages) return '';
+    let page = this.page;
+    const next = ++page;
+    const nextPage = `${baseURL}/api/catalog?p=${next}`;
+    return nextPage;
+  };
+
+  /**
+   * @return {object} 
+   */
+  getSortParams() {
+    let sortOptions;
+    let field:string = "id"; 
+    let type: "ASC" | "DESC" = "ASC";
+    let order = this.sort;
+
+    if (order && order !== 'default') {
+      const sort = order.split('-');
+      field = sort[0];
+
+      if(sort[1].toUpperCase()=="DESC") {
+        type = "DESC";
+      } 
+    }
+
+    sortOptions = { field: field, type: type };
+    return sortOptions;
+  };
+
+  /**
+   * 
+   * @param {string} tableAlias 
+   * @return {OrderByCondition} 
+   */
+  getSortCondition = (tableAlias: string) => {
+    const sortOptions = this.getSortParams();
+    const sortField = sortOptions.field;
+    const sortType = sortOptions.type;
+
+    const field: string = `${tableAlias}.${sortField}`;
+    const type:"ASC" | "DESC" = sortType;
+
+    const sortCond: OrderByCondition = {
+      //'sizes.value': 'ASC', 
+      [field]: type
+  };
+    return sortCond;
+  }
 }

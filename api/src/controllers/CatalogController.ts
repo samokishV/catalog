@@ -1,6 +1,6 @@
 import { Response, Request, NextFunction } from 'express';
 
-import CatalogService = require('../services/CatalogService');
+import {CatalogService} from '../services/CatalogService';
 
 /**
  * @swagger
@@ -48,11 +48,12 @@ export const index = async (req: Request, res: Response) => {
   const { keyword } = req.query;
   const { brand } = req.query;
   const { size } = req.query;
-  const items = await CatalogService.getAll(keyword, brand, size, sort, page);
-  const total = await CatalogService.getTotal();
-  const pageCount = await CatalogService.countPages();
-  const nextPage = await CatalogService.getNextPage(page);
-  const prevPage = CatalogService.getPrevPage(page);
+  const catalog = new CatalogService(keyword, brand, size, sort, page);
+  const items = await catalog.getLimit();
+  const total = await catalog.getTotal();
+  const pageCount = await catalog.countPages();
+  const nextPage = await catalog.getNextPage();
+  const prevPage = catalog.getPrevPage();
 
   if (items.length > 0) {
     return res.send({
