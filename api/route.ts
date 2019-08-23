@@ -6,13 +6,14 @@ import BrandsController = require('./src/controllers/BrandsController');
 import swaggerUi = require('swagger-ui-express');
 import {swaggerSpec} from './swaggerSpec';
 import {options} from './swaggerDocument';
+import SearchCatalogRequest = require('./src/requests/searchCatalogRequest');
 
 export const start = (app: express.Application) => {
   app.use(bodyParser.urlencoded({ extended: true }));
 
   require('express-reverse')(app);
 
-  app.get('/api/catalog', CatalogController.index);
+  app.get('/api/catalog', SearchCatalogRequest.validate, CatalogController.index);
   app.get('/api/types/sizes', TypesSizesController.index);
   app.get('/api/brands', BrandsController.index);
 

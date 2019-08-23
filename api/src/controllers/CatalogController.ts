@@ -1,6 +1,7 @@
 import { Response, Request, NextFunction } from 'express';
 
 import {CatalogService} from '../services/CatalogService';
+import { validationResult } from 'express-validator';
 
 /**
  * @swagger
@@ -41,10 +42,18 @@ import {CatalogService} from '../services/CatalogService';
  *         description: successful operation
  *       404:
  *         description: data not found
+ *       422:
+ *         description: validation errors
  */ 
 export const index = async (req: Request, res: Response) => {
+  const errors = validationResult(req);
+
+  if(!errors.isEmpty()) {
+    return res.status(422).send(errors.array());
+  }
+  
   const page = req.query.page || 1;
-  const { sort } = req.query;
+  const { sort } = req.query || "default";
   const { keyword } = req.query;
   const { brand } = req.query;
   const { size } = req.query;
