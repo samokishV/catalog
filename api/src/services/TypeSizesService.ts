@@ -1,6 +1,9 @@
 import { getConnectionManager } from 'typeorm';
 import { Types } from '../models/Types';
 
+/**
+ * @return {Promise<Types>}
+ */
 export const getAll = async () => {
   const connection = await getConnectionManager().get();
 

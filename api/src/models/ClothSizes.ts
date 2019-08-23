@@ -4,8 +4,9 @@ import {
 import { Clothes } from './Clothes';
 import { Sizes } from './Sizes';
 
-@Entity({ name: 'clothSizes' })
-export class ClothToSize {
+@Entity({ name: 'clothSizes'})
+
+export class ClothSize {
     @PrimaryGeneratedColumn()
     public id: number;
 

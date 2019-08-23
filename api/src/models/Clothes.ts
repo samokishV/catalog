@@ -4,7 +4,7 @@ import {
 import { Brands } from './Brands';
 import { Types } from './Types';
 import { Sizes } from './Sizes';
-import { ClothToSize } from './ClothToSizes';
+import { ClothSize } from './ClothSizes';
 
 @Entity({ synchronize: false })
 export class Clothes {

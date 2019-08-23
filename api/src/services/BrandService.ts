@@ -1,6 +1,9 @@
 import { getConnectionManager, getConnection } from 'typeorm';
 import { Brands } from '../models/Brands';
 
+/**
+ * @return {Promise<Brands>}
+ */
 export const getAll = async () => {
   const connection = await getConnection();
   const BrandsRepository = await connection.getRepository(Brands);

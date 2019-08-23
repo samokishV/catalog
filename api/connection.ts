@@ -5,7 +5,7 @@ import { Clothes } from './src/models/Clothes';
 import { Brands } from './src/models/Brands';
 import { Types } from './src/models/Types';
 import { Sizes } from './src/models/Sizes';
-import { ClothToSize } from './src/models/ClothToSizes';
+import { ClothSize } from './src/models/ClothSizes';
 import { TypeToSize } from './src/models/TypeToSizes';
 
 dotenv.config({ path: '.env' });
@@ -28,7 +28,7 @@ export const connect = async () => {
         Brands,
         Types,
         Sizes,
-        ClothToSize,
+        ClothSize,
         TypeToSize,
       ],
     }).catch(err => console.log(err));

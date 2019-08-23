@@ -1,4 +1,4 @@
-import { getConnectionManager, createQueryBuilder, Brackets, OrderByCondition, SelectQueryBuilder, WhereExpression } from 'typeorm';
+import { getConnectionManager, createQueryBuilder, Brackets, OrderByCondition, SelectQueryBuilder, WhereExpression, getRepository } from 'typeorm';
 import { Clothes } from '../models/Clothes';
 import * as dotenv from 'dotenv';
 
@@ -12,15 +12,23 @@ export class CatalogService {
   keyword: string;
   brand: string;
   size: string;
-  sort: string;
+  sort: string = "default";
   page: number = 1;
 
-  constructor(keyword: string, brand: string, size: string, sort: string = "default", page: number = 1) {
+  constructor()
+  constructor(keyword: string, brand: string, size: string, sort: string, page: number)
+  constructor(keyword?: string, brand?: string, size?: string, sort: string = "default", page: number = 1) {
       this.keyword = keyword;
       this.brand = brand;
       this.size = size;
       this.sort = sort;
       this.page = page;
+  }
+
+  async getAll() {
+    return getRepository(Clothes)
+        .createQueryBuilder()
+        .getMany();
   }
 
   /**
@@ -29,9 +37,6 @@ export class CatalogService {
   async getLimit(): Promise<unknown[]>  {
     const limit = itemsOnPage;
     const offset = (this.page - 1) * limit;
-
-    console.log("limit"+limit+"offset"+offset);
-
     const query = await this.getAllQuery();
     const data = query    
       .skip(offset)
@@ -48,9 +53,10 @@ export class CatalogService {
     const sortCondition = this.getSortCondition('clothes');
 
     const query = await createQueryBuilder('clothes', 'clothes')
-      .innerJoinAndSelect('clothes.brand', 'brand')
-      .innerJoinAndSelect('clothes.type', 'type')
-      .innerJoinAndSelect('clothes.sizes', 'sizes')
+      .select(['clothes.id', 'clothes.name', 'brand', 'type', 'sizes'])
+      .innerJoin('clothes.brand', 'brand')
+      .innerJoin('clothes.type', 'type')
+      .leftJoin('clothes.sizes', 'sizes')
       .where('1 = 1')
       .andWhere((qb : SelectQueryBuilder<Clothes>) : any  => {
         qb.where('1 = 1');
@@ -171,7 +177,7 @@ export class CatalogService {
    * @param {string} tableAlias 
    * @return {OrderByCondition} 
    */
-  getSortCondition = (tableAlias: string) => {
+  getSortCondition(tableAlias: string) {
     const sortOptions = this.getSortParams();
     const sortField = sortOptions.field;
     const sortType = sortOptions.type;

@@ -1,20 +1,19 @@
 import 'mocha';
 import equal = require('deep-equal');
-import { getConnection } from 'typeorm';
+import { getConnection, Connection, Any } from 'typeorm';
 import { Clothes } from '../src/models/Clothes';
+import { ClothSize } from '../src/models/ClothSizes';
 
-import CatalogService = require('../src/services/CatalogService');
+import {CatalogService} from '../src/services/CatalogService';
 import mysql = require('../connection');
 
 import * as dotenv from 'dotenv';
 import { Types } from '../src/models/Types';
 import { Sizes } from '../src/models/Sizes';
-import { ClothToSize } from '../src/models/ClothToSizes';
 import { Brands } from '../src/models/Brands';
 
 import chai = require('chai');
 import chaiAsPromised = require("chai-as-promised");
-import { type } from 'os';
 
 chai.use(chaiAsPromised);
 
@@ -34,11 +33,13 @@ describe('CatalogService Tests', () => {
       ];
 
       tests.forEach((test) => {
-        const result = CatalogService.getPrevPage(test.args);
+        const catalog = new CatalogService();
+        catalog.page = test.args;
+        const result = catalog.getPrevPage();
         if (result !== test.expected) {
           throw new Error(`Expected ${test.expected}, but got ${result}`);
         }
-      });
+      }); 
     });
   });
 
@@ -46,6 +47,7 @@ describe('CatalogService Tests', () => {
     const itemsOnPage = 15;
     const pages = 2;
     const totalTestItems = itemsOnPage * pages;
+    let precondition: Promise<Clothes[]>;
 
     before(async () => {
       await mysql.connect();
@@ -82,25 +84,27 @@ describe('CatalogService Tests', () => {
     });
 
     describe('#getNextPage()', () => {
-      it('should return next page link', () => {
-        const tests = [
-          { args: 1, expected: `${baseURL}/api/catalog?p=2` },
-          { args: 2, expected: '' },
-        ];
-
-        tests.forEach(async (test) => {
-          const result = await CatalogService.getNextPage(test.args);
-          if (result !== test.expected) {
-            throw new Error(`Expected ${test.expected}, but got ${result}`);
-          }
-        });
+      it('should return next page link', async () => {
+          const tests = [
+            { args: 1, expected: `${baseURL}/api/catalog?p=2` },
+            { args: 2, expected: '' },
+          ];
+  
+          tests.forEach(async(test) => {
+              const catalog = new CatalogService();
+              catalog.page = test.args;
+              const result = await catalog.getNextPage();
+  
+              expect(result).to.eql(test.expected);
+          });
       });
     });
 
     describe('#getTotal()', () => {
       it('should return total number of clothes', async () => {
+        const catalog = new CatalogService();
         const expected = totalTestItems;
-        const result = await CatalogService.getTotal();
+        const result = await catalog.getTotal();
         if (result !== expected) {
           throw new Error(`Expected ${expected}, but got ${result}`);
         }
@@ -110,7 +114,8 @@ describe('CatalogService Tests', () => {
     describe('#countPages()', () => {
       it('should return total number of pages', async () => {
         const expected = pages;
-        const result = await CatalogService.countPages();
+        const catalog = new CatalogService();
+        const result = await catalog.countPages();
         if (result !== expected) {
           throw new Error(`Expected ${expected}, but got ${result}`);
         }
@@ -123,6 +128,8 @@ describe('CatalogService Tests', () => {
       await connection.manager.getRepository(Brands).delete({});
       await connection.manager.getRepository(Types).delete({}); 
       await connection.manager.getRepository(Clothes).delete({});
+
+      precondition = null;
     });
   });
 
@@ -135,13 +142,15 @@ describe('CatalogService Tests', () => {
       ];
 
       tests.forEach((test) => {
-        const res = CatalogService.sortCondition(test.args);
+        const catalog = new CatalogService();
+        catalog.sort = test.args;
+        const res = catalog.getSortParams();
         expect(res).to.eql(test.expected);
       });
     });
   });
 
-  describe.only('#getAll', () => {
+  describe('#getAll', () => {
 
     before(async () => {
       await mysql.connect();
@@ -151,7 +160,7 @@ describe('CatalogService Tests', () => {
       await connection.manager.getRepository(Types).delete({});
       await connection.manager.getRepository(Clothes).delete({});
       await connection.manager.getRepository(Sizes).delete({});
-      await connection.manager.getRepository(ClothToSize).delete({});
+      await connection.manager.getRepository(ClothSize).delete({});
 
       const clothes = [
         { id: 1, name: 'ab tebo error', brandId: 1, typeId: 1 },
@@ -187,7 +196,7 @@ describe('CatalogService Tests', () => {
         {model: Brands, values: brands},
         {model: Clothes, values: clothes},
         {model: Sizes, values: sizes},
-        {model: ClothToSize, values: clothSizes},
+        {model: ClothSize, values: clothSizes},
       ];
 
       for (let obj of arr) {
@@ -209,32 +218,35 @@ describe('CatalogService Tests', () => {
         ];
 
         const tests = [
-          { args: [undefined, undefined, undefined, 'name-asc', undefined], 
+          { args: ['', '', '', 'name-asc', 1], 
             expected: [expected[0], expected[1], expected[2]]
           },
-          { args: [undefined, undefined, undefined, 'name-desc', undefined], 
+          { args: ['', '', '', 'name-desc', 1], 
             expected: [expected[2], expected[1], expected[0]]
           },
-          { args: ['dress', undefined, '44', undefined, undefined], 
+          { args: ['dress', '', '44', '', 1], 
             expected: []
           },
-          { args: ['dress', 'Bar', '44', undefined, undefined], 
+          { args: ['dress', 'Bar', '44', '', 1], 
             expected: []
           },
-          { args: ['timberland smugglers 8', undefined, undefined, undefined, undefined], 
+          { args: ['timberland smugglers 8', '', '', '', 1], 
             expected: [expected[1]]
           },
         ];
 
         tests.forEach(async (test) => {
           // @ts-ignore
-          let result = await CatalogService.getAll(test.args[0], test.args[1], test.args[2], test.args[3], test.args[4]);
+          const catalog = new CatalogService(test.args[0], test.args[1], test.args[2], test.args[3], test.args[4]);
+          let result = await catalog.getLimit();
           try {
             expect(result).to.eql(test.expected);
           } catch(e) {
             return done(e);
           }
         });
+
+        done();
       });
     });
 
@@ -246,7 +258,7 @@ describe('CatalogService Tests', () => {
       await connection.manager.getRepository(Types).delete({});
       await connection.manager.getRepository(Clothes).delete({});
       await connection.manager.getRepository(Sizes).delete({});
-      await connection.manager.getRepository(ClothToSize).delete({});
+      await connection.manager.getRepository(ClothSize).delete({});
     });
   });
 });

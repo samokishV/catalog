@@ -23,6 +23,6 @@ export const start = (app: express.Application) => {
   app.use(express.static(`${__dirname}/src/public`));
 
   app.get('/catalog', CatalogController.index);
-  app.post('/catalog/search', searchRequest.search, CatalogController.index);
+  app.post('/catalog/search', searchRequest.validate, CatalogController.index);
   app.get('/catalog/search/page/:page', CatalogController.index);
 };
