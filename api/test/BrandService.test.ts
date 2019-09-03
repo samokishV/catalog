@@ -1,3 +1,4 @@
+/* eslint-env mocha */
 import 'mocha';
 import { expect } from 'chai';
 import { getConnection } from 'typeorm';
@@ -9,12 +10,12 @@ import mysql = require('../connection');
 describe('BrandService Tests', () => {
   describe('#getAll()', () => {
     const brands = [
-      { id: 1, name: 'Foo' }, 
-      { id: 2, name: 'Bar' }, 
-      { id: 3, name: 'Rizz' }, 
-      { id: 4, name: 'Rak' }
+      { id: 1, name: 'Foo' },
+      { id: 2, name: 'Bar' },
+      { id: 3, name: 'Rizz' },
+      { id: 4, name: 'Rak' },
     ];
-    
+
     let expected: Array<Brands>;
 
     before(async () => {
@@ -44,6 +45,6 @@ describe('BrandService Tests', () => {
       await mysql.connect();
       const connection = await getConnection();
       await connection.manager.getRepository(Brands).delete({});
-    });    
+    });
   });
 });

@@ -1,10 +1,6 @@
-import {
-  Entity, Column, ManyToOne, PrimaryGeneratedColumn, JoinColumn,
-} from 'typeorm';
-import { Clothes } from './Clothes';
-import { Sizes } from './Sizes';
+import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity({ name: 'clothSizes'})
+@Entity({ name: 'clothSizes' })
 
 export class ClothSize {
     @PrimaryGeneratedColumn()

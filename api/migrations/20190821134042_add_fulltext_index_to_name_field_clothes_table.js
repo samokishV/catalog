@@ -1,8 +1,4 @@
 
-exports.up = function(knex) { 
-    return knex.schema.raw('CREATE FULLTEXT INDEX `name` ON clothes(`name`)');
-};
+exports.up = knex => knex.schema.raw('CREATE FULLTEXT INDEX `name` ON clothes(`name`)');
 
-exports.down = function(knex) {
-    return knex.schema.raw('ALTER TABLE `clothes` DROP INDEX `name`');  
-};
+exports.down = knex => knex.schema.raw('ALTER TABLE `clothes` DROP INDEX `name`');

@@ -3,5 +3,9 @@
     "plugins": ["@typescript-eslint"],
     "extends": [
         "airbnb-base", "plugin:@typescript-eslint/recommended"
-      ]
-  }
+        ],
+    "rules": {
+        "no-useless-constructor": "off",
+        "import/no-unresolved": "off"
+    }
+}

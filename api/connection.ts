@@ -13,7 +13,7 @@ dotenv.config({ path: '.env' });
 let connection: Connection | void;
 
 export const connect = async () => {
-  if(!connection) {
+  if (!connection) {
     connection = await createConnection({
       name: 'default',
       type: 'mysql',
@@ -34,4 +34,4 @@ export const connect = async () => {
     }).catch(err => console.log(err));
   }
   return connection;
-}
+};

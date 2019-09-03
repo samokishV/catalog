@@ -1,5 +1,5 @@
 import {
-  Entity, PrimaryColumn, Column, OneToMany, PrimaryGeneratedColumn,
+  Entity, Column, OneToMany, PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Clothes } from './Clothes';
 

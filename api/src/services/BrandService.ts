@@ -1,4 +1,4 @@
-import { getConnectionManager, getConnection } from 'typeorm';
+import { getConnection } from 'typeorm';
 import { Brands } from '../models/Brands';
 
 /**

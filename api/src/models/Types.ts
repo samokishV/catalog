@@ -1,5 +1,5 @@
 import {
-  Entity, PrimaryColumn, Column, ManyToOne, JoinColumn, OneToMany, ManyToMany, JoinTable, PrimaryGeneratedColumn,
+  Entity, Column, ManyToMany, JoinTable, PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Sizes } from './Sizes';
 

@@ -1,4 +1,4 @@
-import { Response, Request, NextFunction } from 'express';
+import { Response, Request } from 'express';
 
 import TypesSizesService = require('../services/TypeSizesService');
 
@@ -15,7 +15,7 @@ import TypesSizesService = require('../services/TypeSizesService');
  *         description: successful operation
  *       404:
  *         description: data not found
- */ 
+ */
 export const index = async (req: Request, res: Response) => {
   const data = await TypesSizesService.getAll();
 

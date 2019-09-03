@@ -1,10 +1,9 @@
 import {
-  Entity, PrimaryColumn, Column, ManyToOne, JoinColumn, OneToOne, OneToMany, ManyToMany, JoinTable, CreateDateColumn, UpdateDateColumn, PrimaryGeneratedColumn,
+  Entity, Column, ManyToOne, JoinColumn, OneToOne, ManyToMany, JoinTable, PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Brands } from './Brands';
 import { Types } from './Types';
 import { Sizes } from './Sizes';
-import { ClothSize } from './ClothSizes';
 
 @Entity({ synchronize: false })
 export class Clothes {

@@ -1,44 +1,52 @@
-import { getConnectionManager, createQueryBuilder, Brackets, OrderByCondition, SelectQueryBuilder, WhereExpression, getRepository } from 'typeorm';
-import { Clothes } from '../models/Clothes';
+import {
+  createQueryBuilder, OrderByCondition, SelectQueryBuilder, getRepository,
+} from 'typeorm';
 import * as dotenv from 'dotenv';
+import { Clothes } from '../models/Clothes';
 
 dotenv.config({ path: '.env' });
 
 const itemsOnPage = 15;
 const baseURL = process.env.APP_BASE_URL;
 
-export class CatalogService {
 
+export class CatalogService {
   keyword: string;
+
   brand: string;
+
   size: string;
-  sort: string = "default";
-  page: number = 1;
+
+  sort = 'default';
+
+  page = 1;
 
   constructor()
+
   constructor(keyword: string, brand: string, size: string, sort: string, page: number)
-  constructor(keyword?: string, brand?: string, size?: string, sort: string = "default", page: number = 1) {
-      this.keyword = keyword;
-      this.brand = brand;
-      this.size = size;
-      this.sort = sort;
-      this.page = page;
+
+  constructor(keyword?: string, brand?: string, size?: string, sort = 'default', page = 1) {
+    this.keyword = keyword;
+    this.brand = brand;
+    this.size = size;
+    this.sort = sort;
+    this.page = page;
   }
 
   async getAll() {
     return getRepository(Clothes)
-        .createQueryBuilder()
-        .getMany();
+      .createQueryBuilder()
+      .getMany();
   }
 
   /**
    * @return {Promise<unknown[]>}
    */
-  async getLimit(): Promise<unknown[]>  {
+  async getLimit(): Promise<unknown[]> {
     const limit = itemsOnPage;
     const offset = (this.page - 1) * limit;
     const query = await this.getAllQuery();
-    const data = query    
+    const data = query
       .skip(offset)
       .take(limit)
       .getMany();
@@ -58,7 +66,7 @@ export class CatalogService {
       .innerJoin('clothes.type', 'type')
       .leftJoin('clothes.sizes', 'sizes')
       .where('1 = 1')
-      .andWhere((qb : SelectQueryBuilder<Clothes>) : any  => {
+      .andWhere((qb: SelectQueryBuilder<Clothes>): any => {
         qb.where('1 = 1');
         this.getWhereKeywordQuery(qb);
         this.getWhereBrandQuery(qb);
@@ -67,37 +75,37 @@ export class CatalogService {
       .orderBy(sortCondition);
 
     return query;
-  };
+  }
 
   /**
-   * 
-   * @param {SelectQueryBuilder<Clothes>} subQuery 
+   *
+   * @param {SelectQueryBuilder<Clothes>} subQuery
    * @return {SelectQueryBuilder<Clothes>} | void
    */
-    getWhereKeywordQuery(subQuery : SelectQueryBuilder<Clothes>) : SelectQueryBuilder<Clothes> | void  {
-      if (this.keyword) {
-        return subQuery.andWhere(`( MATCH(clothes.name) AGAINST ('${this.keyword}') OR brand.name like :name OR type.name like :name )`, {name: '%' + this.keyword + '%'});
-      }
+  getWhereKeywordQuery(subQuery: SelectQueryBuilder<Clothes>): SelectQueryBuilder<Clothes> | void {
+    if (this.keyword) {
+      return subQuery.andWhere(`( MATCH(clothes.name) AGAINST ('${this.keyword}') OR brand.name like :name OR type.name like :name )`, { name: `%${this.keyword}%` });
     }
+  }
 
   /**
-   * 
-   * @param {SelectQueryBuilder<Clothes>} subQuery 
-   * @return {SelectQueryBuilder<Clothes>} | void 
+   *
+   * @param {SelectQueryBuilder<Clothes>} subQuery
+   * @return {SelectQueryBuilder<Clothes>} | void
    */
-  getWhereBrandQuery(subQuery : SelectQueryBuilder<Clothes>) : SelectQueryBuilder<Clothes> | void  {
+  getWhereBrandQuery(subQuery: SelectQueryBuilder<Clothes>): SelectQueryBuilder<Clothes> | void {
     if (this.brand) {
       return subQuery.andWhere('brand.name = :brand', { brand: this.brand });
     }
   }
 
   /**
-   * 
-   * @param {SelectQueryBuilder<Clothes>} subQuery 
-   * @return {SelectQueryBuilder<Clothes>} | void 
+   *
+   * @param {SelectQueryBuilder<Clothes>} subQuery
+   * @return {SelectQueryBuilder<Clothes>} | void
    */
-  getWhereSizeQuery(subQuery : SelectQueryBuilder<Clothes>) : SelectQueryBuilder<Clothes> | void {
-    if(this.size) {
+  getWhereSizeQuery(subQuery: SelectQueryBuilder<Clothes>): SelectQueryBuilder<Clothes> | void {
+    if (this.size) {
       return subQuery.andWhere(`clothes.id IN ${
         subQuery.subQuery()
           .select('clothId')
@@ -105,7 +113,7 @@ export class CatalogService {
           .leftJoin('clothes.sizes', 's')
           .where('value = :size', { size: this.size })
           .getQuery()
-        }`);
+      }`);
     }
   }
 
@@ -116,7 +124,7 @@ export class CatalogService {
     const query = await this.getAllQuery();
     const data = query.getCount();
     return data;
-  };
+  }
 
   /**
    * @return {Promise<number>}
@@ -125,70 +133,70 @@ export class CatalogService {
     const total = await this.getTotal();
     const pageCount = total / itemsOnPage;
     return Math.ceil(pageCount);
-  };  
+  }
 
   /**
-   * @return {string} 
+   * @return {string}
    */
   getPrevPage(): string {
-    if (this.page == 1) return '';
-    let page = this.page;
+    if (this.page === 1) return '';
+    let { page } = this;
     const prev = --page;
     const prevPage = `${baseURL}/api/catalog?p=${prev}`;
     return prevPage;
-  };
+  }
 
   /**
-   * @return {Promise<string>} 
+   * @return {Promise<string>}
    */
   async getNextPage(): Promise<string> {
     const totalPages = await this.countPages();
-    if (this.page == totalPages) return '';
-    let page = this.page;
+    if (this.page === totalPages) return '';
+    let { page } = this;
     const next = ++page;
     const nextPage = `${baseURL}/api/catalog?p=${next}`;
     return nextPage;
-  };
+  }
 
   /**
-   * @return {object} 
+   * @return {object}
    */
   getSortParams() {
     let sortOptions;
-    let field:string = "id"; 
-    let type: "ASC" | "DESC" = "ASC";
-    let order = this.sort;
+    let field = 'id';
+    let type: 'ASC' | 'DESC' = 'ASC';
+    const order = this.sort;
 
     if (order && order !== 'default') {
       const sort = order.split('-');
       field = sort[0];
 
-      if(sort[1].toUpperCase()=="DESC") {
-        type = "DESC";
-      } 
+      if (sort[1].toUpperCase() === 'DESC') {
+        type = 'DESC';
+      }
     }
 
-    sortOptions = { field: field, type: type };
+    sortOptions = { field, type };
     return sortOptions;
-  };
+  }
 
   /**
-   * 
-   * @param {string} tableAlias 
-   * @return {OrderByCondition} 
+   *
+   * @param {string} tableAlias
+   * @return {OrderByCondition}
    */
   getSortCondition(tableAlias: string) {
     const sortOptions = this.getSortParams();
     const sortField = sortOptions.field;
     const sortType = sortOptions.type;
 
-    const field: string = `${tableAlias}.${sortField}`;
-    const type:"ASC" | "DESC" = sortType;
+    const field = `${tableAlias}.${sortField}`;
+    const type: 'ASC' | 'DESC' = sortType;
 
     const sortCond: OrderByCondition = {
-      //'sizes.value': 'ASC', 
-      [field]: type
-  };
+      // 'sizes.value': 'ASC',
+      [field]: type,
+    };
     return sortCond;
   }
 }
