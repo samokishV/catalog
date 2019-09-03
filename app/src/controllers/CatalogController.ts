@@ -6,6 +6,7 @@ import Catalog = require('../models/Catalog');
 import Brand = require('../models/Brand');
 import TypeSize = require('../models/TypeSize');
 import bootstrapPagination = require('../../helpers/bootstrapPagination');
+import _ = require('lodash');
 
 export const index = async (req: Request, res: Response) => {
   const errors = validationResult(req);
@@ -33,6 +34,10 @@ export const index = async (req: Request, res: Response) => {
       items = data.items;
       const paginator = bootstrapPagination.create('/catalog/search', page, 15, data.total, params);
       paginationHTML = paginator.render();
+      
+      items.forEach(function(element) {
+        element.sizes = _.sortBy(element.sizes, 'value')
+      });
     }
   }
 
