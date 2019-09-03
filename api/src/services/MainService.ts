@@ -1,19 +1,10 @@
-import * as dotenv from 'dotenv';
-import {routes} from '../../route';
-
-dotenv.config({ path: '.env' });
-
-const baseURL = process.env.APP_BASE_URL;
+import {endpoints} from '../../route';
 
 /**
- * @return {Array<string>}
+ * @return {Array<object>}
  */
-export const getRoutes = () : Array<string> => {
-  const data: Array<string> = [
-    `${baseURL}${routes.getLink('catalog')}`,
-    `${baseURL}${routes.getLink('type-sizes')}`,
-    `${baseURL}${routes.getLink('brands')}`,    
-  ];
+export const getRoutes = () : Array<object> => {
+  const data: Array<object> = endpoints;
 
   return data;
 };

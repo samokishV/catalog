@@ -29,6 +29,7 @@
     "ejs": "^2.6.2",
     "express": "^4.17.1",
     "express-group-routes": "^1.1.0",
+    "express-list-endpoints": "^4.0.1",
     "express-reverse": "^0.3.2",
     "express-shared-routes": "^0.1.1",
     "express-validator": "^6.1.1",

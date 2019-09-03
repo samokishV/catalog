@@ -10,7 +10,10 @@ import {options} from './swaggerDocument';
 import SearchCatalogRequest = require('./src/requests/searchCatalogRequest');
 
 const {RouteManager} = require('express-shared-routes');
+const listEndpoints = require('express-list-endpoints');
+
 export const routes = new RouteManager();
+export let endpoints: Array <object>;
 
 export const start = (app: express.Application) => {
   app.use(bodyParser.urlencoded({ extended: true }));
@@ -28,4 +31,5 @@ export const start = (app: express.Application) => {
   app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(null, options));
 
   routes.applyRoutes(app);
+  endpoints = listEndpoints(app);
 };
