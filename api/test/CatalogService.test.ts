@@ -2,6 +2,7 @@
 import 'mocha';
 import { getConnection } from 'typeorm';
 import * as dotenv from 'dotenv';
+import supertest from "supertest";
 import { Clothes } from '../src/models/Clothes';
 import { ClothSize } from '../src/models/ClothSizes';
 
@@ -23,8 +24,9 @@ const { expect } = chai;
 dotenv.config({ path: '.env' });
 
 const baseURL = process.env.APP_BASE_URL;
+const server = supertest.agent(baseURL);
 
-describe('CatalogService Tests', () => {
+describe('CatalogService and /api/catalog route Tests', () => {
   describe('#getPrevPage()', () => {
     it('should return previous page link', () => {
       const tests = [
@@ -147,7 +149,7 @@ describe('CatalogService Tests', () => {
     });
   });
 
-  describe('#getAll', () => {
+  describe('#getAll and /api/catalog route test', () => {
     before(async () => {
       await mysql.connect();
       const connection = await getConnection();
@@ -260,6 +262,92 @@ describe('CatalogService Tests', () => {
         });
 
         done();
+      });
+    });
+
+    describe('# GET /api/catalog', () => {
+      it("responds with json", (done) => {
+        server
+        .get('/api/catalog')
+        .expect("Content-type",/json/)
+        .expect(200)
+        .end((err,res) => {
+          if (err) return done(err);
+          done();
+        });
+      });
+
+      it("keyword validation check (should responds with 404)", (done) => {
+        server
+        .get('/api/catalog?keyword=窍门')
+        .expect(404)
+        .end((err,res) => {
+          if (err) return done(err);
+          done();
+        });
+      });
+
+      it("fulltext index name check (should responds with json)", (done) => {
+        server
+        .get('/api/catalog?keyword=timberland smugglers 8')
+        .expect(200)
+        .end((err,res) => {
+          if (err) return done(err);
+          done();
+        });
+      });
+
+      it("brand validation check (should responds with 404)", (done) => {
+
+        server
+        .get("/api/catalog?brand=Walsh-ash, Aufderhar and O'Stale")
+        .expect(404)
+        .end((err,res) => {
+          if (err) return done(err);
+          done();
+        });
+      });
+
+      it("sort validation check (should responds with 422)", (done) => {
+        server
+        .get('/api/catalog?sort=name')
+        .expect(422)
+        .end((err,res) => {
+          if (err) return done(err);
+          done();
+        });
+      });
+
+      it("page validation check (should responds with 422)", (done) => {
+        server
+        .get('/api/catalog?page=0')
+        .expect(422)
+        .end((err,res) => {
+          if (err) return done(err);
+          done();
+        });
+      });
+
+      it("page validation check (should responds with 422)", (done) => {
+        server
+        .get('/api/catalog?page=nmn')
+        .expect(422)
+        .end((err,res) => {
+          if (err) return done(err);
+          done();
+        });
+      });
+  
+      it("should return 404", async () => {
+        await mysql.connect();
+        const connection = await getConnection();
+        await connection.manager.getRepository(Brands).delete({});
+        await connection.manager.getRepository(Types).delete({});
+        await connection.manager.getRepository(Clothes).delete({});
+  
+        server
+        .get('/api/catalog')
+        .expect(404);
       });
     });
 

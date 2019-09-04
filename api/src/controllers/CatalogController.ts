@@ -54,7 +54,7 @@ export const index = async (req: Request, res: Response) => {
 
   const page = req.query.page || 1;
   const { sort } = req.query || 'default';
-  const { keyword } = req.query;
+  const { keyword }  = req.query;
   const { brand } = req.query;
   const { size } = req.query;
   const catalog = new CatalogService(keyword, brand, size, sort, page);

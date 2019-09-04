@@ -9,7 +9,7 @@ export const validate = [
     .matches(new XRegExp('^[\\pL 0-9]*$'))
     .withMessage('Keyword must be alphanumeric, and can contain underscores'),
   check('brand')
-    .matches(new XRegExp('^[\\pL 0-9 \\- \\,]*$'))
+    .matches(new XRegExp("^[\\pL 0-9 \\- \\, \\']*$"))
     .withMessage('Brand must be alphanumeric, and can contain underscores'),
   check('size')
     .matches(new XRegExp('^([3][5-9]|[4][0-5]|[SML])*$'))
