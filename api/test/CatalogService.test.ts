@@ -279,7 +279,8 @@ describe('CatalogService and /api/catalog route Tests', () => {
 
       it("keyword validation check (should responds with 404)", (done) => {
         server
-        .get('/api/catalog?keyword=窍门')
+        .get('/api/catalog')
+        .query({ keyword:'下午好' })
         .expect(404)
         .end((err,res) => {
           if (err) return done(err);
@@ -289,7 +290,8 @@ describe('CatalogService and /api/catalog route Tests', () => {
 
       it("fulltext index name check (should responds with json)", (done) => {
         server
-        .get('/api/catalog?keyword=timberland smugglers 8')
+        .get('/api/catalog')
+        .query({ keyword: 'timberland smugglers 8' })
         .expect(200)
         .end((err,res) => {
           if (err) return done(err);
@@ -298,9 +300,9 @@ describe('CatalogService and /api/catalog route Tests', () => {
       });
 
       it("brand validation check (should responds with 404)", (done) => {
-
         server
-        .get("/api/catalog?brand=Walsh-ash, Aufderhar and O'Stale")
+        .get('/api/catalog')
+        .query({ brand: "Walsh-ash, Aufderhar and O'Stale" })
         .expect(404)
         .end((err,res) => {
           if (err) return done(err);
@@ -310,7 +312,8 @@ describe('CatalogService and /api/catalog route Tests', () => {
 
       it("sort validation check (should responds with 422)", (done) => {
         server
-        .get('/api/catalog?sort=name')
+        .get('/api/catalog')
+        .query({ sort:'name' })
         .expect(422)
         .end((err,res) => {
           if (err) return done(err);
@@ -320,7 +323,8 @@ describe('CatalogService and /api/catalog route Tests', () => {
 
       it("page validation check (should responds with 422)", (done) => {
         server
-        .get('/api/catalog?page=0')
+        .get('/api/catalog')
+        .query({ page:0 })
         .expect(422)
         .end((err,res) => {
           if (err) return done(err);
@@ -330,7 +334,8 @@ describe('CatalogService and /api/catalog route Tests', () => {
 
       it("page validation check (should responds with 422)", (done) => {
         server
-        .get('/api/catalog?page=nmn')
+        .get('/api/catalog')
+        .query({ page:'nmn' })
         .expect(422)
         .end((err,res) => {
           if (err) return done(err);
