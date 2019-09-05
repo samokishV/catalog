@@ -19,7 +19,7 @@ export class CatalogService {
 
   sort = 'default';
 
-  page = 1;
+  page: number = 1;
 
   total: number;
 
@@ -194,7 +194,7 @@ export class CatalogService {
    * @return {string}
    */
   getPrevPage(): string {
-    if (this.page === 1) return '';
+    if (this.page == 1) return '';
     let { page } = this;
     const prev = --page;
     const prevPage = `${baseURL}/api/catalog?page=${prev}`;
@@ -206,7 +206,7 @@ export class CatalogService {
    */
   async getNextPage(): Promise<string> {
     const totalPages = await this.countPages();
-    if (this.page === totalPages) return '';
+    if (this.page == totalPages) return '';
     let { page } = this;
     const next = ++page;
     const nextPage = `${baseURL}/api/catalog?page=${next}`;
