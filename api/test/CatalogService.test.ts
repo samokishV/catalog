@@ -31,7 +31,7 @@ describe('CatalogService and /api/catalog route Tests', () => {
     it('should return previous page link', () => {
       const tests = [
         { args: 1, expected: '' },
-        { args: 2, expected: `${baseURL}/api/catalog?p=1` },
+        { args: 2, expected: `${baseURL}/api/catalog?page=1` },
       ];
 
       tests.forEach((test) => {
@@ -87,7 +87,7 @@ describe('CatalogService and /api/catalog route Tests', () => {
     describe('#getNextPage()', () => {
       it('should return next page link', async () => {
         const tests = [
-          { args: 1, expected: `${baseURL}/api/catalog?p=2` },
+          { args: 1, expected: `${baseURL}/api/catalog?page=2` },
           { args: 2, expected: '' },
         ];
 

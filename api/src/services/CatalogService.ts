@@ -21,7 +21,9 @@ export class CatalogService {
 
   page = 1;
 
-  constructor()
+  total: number;
+
+  constructor() 
 
   constructor(keyword: string, brand: string, size: string, sort: string, page: number)
 
@@ -70,7 +72,7 @@ export class CatalogService {
         qb.where('1 = 1');
         this.getWhereKeywordQuery(qb);
         this.getWhereBrandQuery(qb);
-        this.getWhereSizeQuery(qb);
+        this.getWhereSizeQueryWithSizes(qb);
       })
       .orderBy(sortCondition);
 
@@ -106,6 +108,17 @@ export class CatalogService {
    */
   getWhereSizeQuery(subQuery: SelectQueryBuilder<Clothes>): SelectQueryBuilder<Clothes> | void {
     if (this.size) {
+      return subQuery.andWhere('sizes.value = :size', { size: this.size });
+    }
+  }
+
+  /**
+   *
+   * @param {SelectQueryBuilder<Clothes>} subQuery
+   * @return {SelectQueryBuilder<Clothes>} | void
+   */
+  getWhereSizeQueryWithSizes(subQuery: SelectQueryBuilder<Clothes>): SelectQueryBuilder<Clothes> | void {
+    if (this.size) {
       return subQuery.andWhere(`clothes.id IN ${
         subQuery.subQuery()
           .select('clothId')
@@ -121,8 +134,50 @@ export class CatalogService {
    * @return {Promise<number>}
    */
   async getTotal(): Promise<number> {
-    const query = await this.getAllQuery();
-    const data = query.getCount();
+    if(!this.total) {
+      await this.setTotal();
+    }
+    return this.total;
+  }
+
+  /**
+   * @return {Promise<number>}
+   */
+  async setTotal():Promise<number> {
+    let data;
+    if(this.keyword || this.brand || this.size) {
+      data = await this.getTotalWithConditions();
+    } else {
+      data = await this.getTotalWithoutConditions();
+    }
+    return this.total = data;
+  }
+
+  /**
+   * @return {Promise<number>}
+   */
+  getTotalWithConditions():Promise<number>  {
+    return createQueryBuilder('clothes', 'clothes')
+      .select(['clothes.id', 'clothes.name', 'brand', 'type', 'sizes'])
+      .innerJoin('clothes.brand', 'brand')
+      .innerJoin('clothes.type', 'type')
+      .leftJoin('clothes.sizes', 'sizes')
+      .where('1 = 1')
+      .andWhere((qb: SelectQueryBuilder<Clothes>): any => {
+        qb.where('1 = 1');
+        this.getWhereKeywordQuery(qb);
+        this.getWhereBrandQuery(qb);
+        this.getWhereSizeQuery(qb);
+      })
+      .getCount();
+  }
+
+  /**
+   * @return {Promise<number>}
+   */
+  async getTotalWithoutConditions():Promise<number>  {
+    const catalogRepository = await getRepository(Clothes);
+    const data =  await catalogRepository.count();
     return data;
   }
 
@@ -142,7 +197,7 @@ export class CatalogService {
     if (this.page === 1) return '';
     let { page } = this;
     const prev = --page;
-    const prevPage = `${baseURL}/api/catalog?p=${prev}`;
+    const prevPage = `${baseURL}/api/catalog?page=${prev}`;
     return prevPage;
   }
 
@@ -154,7 +209,7 @@ export class CatalogService {
     if (this.page === totalPages) return '';
     let { page } = this;
     const next = ++page;
-    const nextPage = `${baseURL}/api/catalog?p=${next}`;
+    const nextPage = `${baseURL}/api/catalog?page=${next}`;
     return nextPage;
   }
 
@@ -194,7 +249,6 @@ export class CatalogService {
     const type: 'ASC' | 'DESC' = sortType;
 
     const sortCond: OrderByCondition = {
-      // 'sizes.value': 'ASC',
       [field]: type,
     };
     return sortCond;
