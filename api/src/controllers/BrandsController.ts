@@ -13,8 +13,6 @@ import BrandService = require('../services/BrandService');
  *     responses:
  *       200:
  *         description: successful operation
- *       404:
- *         description: data not found
  */
 export const index = async (req: Request, res: Response) => {
   const data = await BrandService.getAll();

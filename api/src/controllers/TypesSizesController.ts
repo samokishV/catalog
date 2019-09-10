@@ -13,8 +13,6 @@ import TypesSizesService = require('../services/TypeSizesService');
  *     responses:
  *       200:
  *         description: successful operation
- *       404:
- *         description: data not found
  */
 export const index = async (req: Request, res: Response) => {
   const data = await TypesSizesService.getAll();

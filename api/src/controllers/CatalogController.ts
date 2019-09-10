@@ -40,8 +40,6 @@ import { CatalogService } from '../services/CatalogService';
  *     responses:
  *       200:
  *         description: successful operation
- *       404:
- *         description: data not found
  *       422:
  *         description: validation errors
  */

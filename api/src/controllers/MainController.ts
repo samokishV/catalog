@@ -13,8 +13,6 @@ import MainService = require('../services/MainService');
  *     responses:
  *       200:
  *         description: successful operation
- *       404:
- *         description: data not found
  */
 export const index = (req: Request, res: Response) => {
   const data: Array<object> = MainService.getRoutes();
