@@ -64,11 +64,7 @@ export const index = async (req: Request, res: Response) => {
   const nextPage = await catalog.getNextPage();
   const prevPage = catalog.getPrevPage();
 
-  if (items.length > 0) {
-    return res.send({
-      itemCount: items.length, total, pageCount, items, previous: prevPage, next: nextPage,
-    });
-  }
-
-  return res.status(404).send('Data not found');
+  return res.send({
+    itemCount: items.length, total, pageCount, items, previous: prevPage, next: nextPage,
+  });
 };

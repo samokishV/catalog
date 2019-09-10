@@ -18,10 +18,5 @@ import MainService = require('../services/MainService');
  */
 export const index = (req: Request, res: Response) => {
   const data: Array<object> = MainService.getRoutes();
-
-  if (data.length > 0) {
-    return res.send({ links: data });
-  }
-
-  return res.status(404).send('Data not found');
+  return res.send({ links: data });
 };

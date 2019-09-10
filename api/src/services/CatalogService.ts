@@ -7,8 +7,6 @@ import { Clothes } from '../models/Clothes';
 dotenv.config({ path: '.env' });
 
 const itemsOnPage = 15;
-const baseURL = process.env.APP_BASE_URL;
-
 
 export class CatalogService {
   keyword: string;
@@ -197,7 +195,7 @@ export class CatalogService {
     if (this.page == 1) return '';
     let { page } = this;
     const prev = --page;
-    const prevPage = `${baseURL}/api/catalog?page=${prev}`;
+    const prevPage = `/api/catalog?page=${prev}`;
     return prevPage;
   }
 
@@ -209,7 +207,7 @@ export class CatalogService {
     if (this.page == totalPages) return '';
     let { page } = this;
     const next = ++page;
-    const nextPage = `${baseURL}/api/catalog?page=${next}`;
+    const nextPage = `/api/catalog?page=${next}`;
     return nextPage;
   }
 

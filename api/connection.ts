@@ -1,6 +1,6 @@
 import * as dotenv from 'dotenv';
 
-import { createConnection, Connection } from 'typeorm';
+import { createConnections, Connection, createConnection, getConnection } from 'typeorm';
 import { Clothes } from './src/models/Clothes';
 import { Brands } from './src/models/Brands';
 import { Types } from './src/models/Types';
@@ -35,3 +35,5 @@ export const connect = async () => {
   }
   return connection;
 };
+
+

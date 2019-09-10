@@ -11,8 +11,10 @@
   },
   "dependencies": {
     "@types/dotenv": "^6.1.1",
+    "@types/supertest": "^2.0.8",
     "eslint-plugin-jsx-a11y": "^6.2.3",
     "eslint-plugin-react": "^7.14.3",
+    "js-htmlencode": "^0.3.0",
     "typescript": "^3.5.3"
   }
 }

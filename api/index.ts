@@ -7,7 +7,7 @@ mysql.connect();
 
 import express = require('express');
 
-const app = express();
+export const app = express();
 
 import route = require('./route');
 
@@ -17,3 +17,4 @@ const port: number = parseInt(String(process.env.PORT), 10);
 const host = process.env.HOST;
 
 app.listen(port, host, () => {});
+

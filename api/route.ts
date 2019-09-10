@@ -33,6 +33,4 @@ export const start = (app: express.Application) => {
 
   routes.applyRoutes(app);
   endpoints = listEndpoints(app);
-
-
 };

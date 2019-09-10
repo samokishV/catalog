@@ -1,7 +1,7 @@
 import * as dotenv from 'dotenv';
 import { logger } from '../../logger';
 
-import requestify = require('requestify');
+const requestify = require('requestify');
 
 dotenv.config({ path: '.env' });
 

@@ -1,48 +1,66 @@
 /* eslint-env mocha */
 import 'mocha';
 import * as dotenv from 'dotenv';
-import supertest from "supertest";
+import supertest from 'supertest';
 import { expect } from 'chai';
-import { getConnection } from 'typeorm';
+import { Connection } from 'typeorm';
 import { Brands } from '../src/models/Brands';
+import {
+  initConnectDB, initServer, close, disconnect,
+} from '../setup';
 
 import BrandService = require('../src/services/BrandService');
-import mysql = require('../connection');
 
 dotenv.config({ path: '.env' });
 
-const baseURL = process.env.APP_BASE_URL;
-const server = supertest.agent(baseURL);
+let connection: Connection;
 
-describe('BrandService and /api/brands route Tests', () => {
-  const brands = [
-    { id: 1, name: 'Foo' },
-    { id: 2, name: 'Bar' },
-    { id: 3, name: 'Rizz' },
-    { id: 4, name: 'Rak' },
-  ];
+const port: number = parseInt(process.env.TEST_PORT, 10);
+const hostname = process.env.TEST_HOST;
 
-  let expected: Array<Brands>;
+const baseURL = `${hostname}:${port}`;
+const server: supertest.SuperTest<supertest.Test> = supertest.agent(baseURL);
 
+
+describe('BrandService and /api/brands route Tests', async () => {
   before(async () => {
-    await mysql.connect();
-    const connection = await getConnection();
-    await connection.manager.getRepository(Brands).delete({});
+    await initServer();
+    connection = await initConnectDB();
+  });
 
-    await connection.manager
+  after(async () => {
+    await disconnect();
+    await close();
+  });
+
+  beforeEach(async () => {
+    const brands = [
+      { id: 1, name: 'Foo' },
+      { id: 2, name: 'Bar' },
+      { id: 3, name: 'Rizz' },
+      { id: 4, name: 'Rak' },
+    ];
+
+    await connection
       .createQueryBuilder()
       .insert()
       .into(Brands)
       .values(brands)
       .execute();
+  });
 
-    expected = await connection
-      .getRepository(Brands)
-      .createQueryBuilder()
-      .getMany();
+  afterEach(async () => {
+    await connection.getRepository(Brands).delete({});
   });
 
   describe('#getAll()', () => {
+    const expected = [
+      { id: 1, name: 'Foo' },
+      { id: 2, name: 'Bar' },
+      { id: 3, name: 'Rizz' },
+      { id: 4, name: 'Rak' },
+    ];
+
     it('should return array of brand objects', async () => {
       const result = await BrandService.getAll();
       expect(result).to.eql(expected);
@@ -50,32 +68,33 @@ describe('BrandService and /api/brands route Tests', () => {
   });
 
   describe('# GET api/brands', () => {
-    it("responds with json", (done) => {
+    const expected = [
+      { id: 1, name: 'Foo' },
+      { id: 2, name: 'Bar' },
+      { id: 3, name: 'Rizz' },
+      { id: 4, name: 'Rak' },
+    ];
+
+    it('responds with json', (done) => {
       server
-      .get('/api/brands')
-      .expect("Content-type",/json/)
-      .expect(200)
-      .end((err,res) => {
-        if (err) return done(err);
-        done();
-      });
+        .get('/api/brands')
+        .expect('Content-type', /json/)
+        .expect(200)
+        .end((err, res) => {
+          expect(res.body).to.eql(expected);
+          if (err) return done(err);
+          done();
+        });
     });
 
-    it("should return 404", async () => {
-      await mysql.connect();
-      const connection = await getConnection();
-      await connection.manager.getRepository(Brands).delete({});
+    it('should return empty array', async () => {
+      await connection.getRepository(Brands).delete({});
 
-      server
-      .get('/api/brands')
-      .expect(404);
+      return server
+        .get('/api/brands')
+        .expect(200)
+        .expect('Content-Type', /json/)
+        .expect([]);
     });
-  });
-
-  after(async () => {
-    await mysql.connect();
-    const connection = await getConnection();
-    await connection.manager.getRepository(Brands).delete({});
   });
 });
-

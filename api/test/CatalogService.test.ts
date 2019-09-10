@@ -1,18 +1,17 @@
 /* eslint-env mocha */
 import 'mocha';
-import { getConnection } from 'typeorm';
+import { Connection } from 'typeorm';
 import * as dotenv from 'dotenv';
-import supertest from "supertest";
+import supertest from 'supertest';
 import { Clothes } from '../src/models/Clothes';
 import { ClothSize } from '../src/models/ClothSizes';
-
 import { CatalogService } from '../src/services/CatalogService';
-
 import { Types } from '../src/models/Types';
 import { Sizes } from '../src/models/Sizes';
 import { Brands } from '../src/models/Brands';
-
-import mysql = require('../connection');
+import {
+  initConnectDB, initServer, close, disconnect,
+} from '../setup';
 
 import chai = require('chai');
 import chaiAsPromised = require('chai-as-promised');
@@ -23,15 +22,30 @@ const { expect } = chai;
 
 dotenv.config({ path: '.env' });
 
-const baseURL = process.env.APP_BASE_URL;
-const server = supertest.agent(baseURL);
+let connection: Connection;
+
+const port: number = parseInt(process.env.TEST_PORT, 10);
+const hostname = process.env.TEST_HOST;
+
+const baseURL = `${hostname}:${port}`;
+const server: supertest.SuperTest<supertest.Test> = supertest.agent(baseURL);
 
 describe('CatalogService and /api/catalog route Tests', () => {
+  before(async () => {
+    await initServer();
+    connection = await initConnectDB();
+  });
+
+  after(async () => {
+    await disconnect();
+    await close();
+  });
+
   describe('#getPrevPage()', () => {
     it('should return previous page link', () => {
       const tests = [
         { args: 1, expected: '' },
-        { args: 2, expected: `${baseURL}/api/catalog?page=1` },
+        { args: 2, expected: '/api/catalog?page=1' },
       ];
 
       tests.forEach((test) => {
@@ -50,13 +64,7 @@ describe('CatalogService and /api/catalog route Tests', () => {
     const pages = 2;
     const totalTestItems = itemsOnPage * pages;
 
-    before(async () => {
-      await mysql.connect();
-      const connection = await getConnection();
-      await connection.manager.getRepository(Brands).delete({});
-      await connection.manager.getRepository(Types).delete({});
-      await connection.manager.getRepository(Clothes).delete({});
-
+    beforeEach(async () => {
       const clothes = [];
       const types = [{ id: 1, name: 'shoes' }];
       const brands = [{ id: 1, name: 'Foo' }];
@@ -87,7 +95,7 @@ describe('CatalogService and /api/catalog route Tests', () => {
     describe('#getNextPage()', () => {
       it('should return next page link', async () => {
         const tests = [
-          { args: 1, expected: `${baseURL}/api/catalog?page=2` },
+          { args: 1, expected: '/api/catalog?page=2' },
           { args: 2, expected: '' },
         ];
 
@@ -123,9 +131,7 @@ describe('CatalogService and /api/catalog route Tests', () => {
       });
     });
 
-    after(async () => {
-      await mysql.connect();
-      const connection = await getConnection();
+    afterEach(async () => {
       await connection.manager.getRepository(Brands).delete({});
       await connection.manager.getRepository(Types).delete({});
       await connection.manager.getRepository(Clothes).delete({});
@@ -150,16 +156,7 @@ describe('CatalogService and /api/catalog route Tests', () => {
   });
 
   describe('#getAll and /api/catalog route test', () => {
-    before(async () => {
-      await mysql.connect();
-      const connection = await getConnection();
-
-      await connection.manager.getRepository(Brands).delete({});
-      await connection.manager.getRepository(Types).delete({});
-      await connection.manager.getRepository(Clothes).delete({});
-      await connection.manager.getRepository(Sizes).delete({});
-      await connection.manager.getRepository(ClothSize).delete({});
-
+    beforeEach(async () => {
       const clothes = [
         {
           id: 1, name: 'ab tebo error', brandId: 1, typeId: 1,
@@ -213,21 +210,25 @@ describe('CatalogService and /api/catalog route Tests', () => {
       }
     });
 
-    describe('#getAll', () => {
-      it('should return clothes items and items info', (done) => {
-        const expected = [
-          {
-            id: 1, name: 'ab tebo error', brand: { id: 1, name: 'Foo' }, type: { id: 1, name: 'shoes' }, sizes: [{ id: 1, value: '44' }, { id: 2, value: '45' }],
-          },
-          {
-            id: 2, name: 'TIMBERLAND© BOOT COMPANY 8-INCH SMUGGLERS NOTCH CAP TOE BOOTS', brand: { id: 2, name: 'Bar' }, type: { id: 1, name: 'shoes' }, sizes: [{ id: 2, value: '45' }],
-          },
-          {
-            id: 3, name: 'vivo la vivo', brand: { id: 1, name: 'Foo' }, type: { id: 2, name: 'dress' }, sizes: [{ id: 3, value: 'XL' }],
-          },
-        ];
+    const expected = [
+      {
+        id: 1, name: 'ab tebo error', brand: { id: 1, name: 'Foo' }, type: { id: 1, name: 'shoes' }, sizes: [{ id: 1, value: '44' }, { id: 2, value: '45' }],
+      },
+      {
+        id: 2, name: 'TIMBERLAND© BOOT COMPANY 8-INCH SMUGGLERS NOTCH CAP TOE BOOTS', brand: { id: 2, name: 'Bar' }, type: { id: 1, name: 'shoes' }, sizes: [{ id: 2, value: '45' }],
+      },
+      {
+        id: 3, name: 'vivo la vivo', brand: { id: 1, name: 'Foo' }, type: { id: 2, name: 'dress' }, sizes: [{ id: 3, value: 'XL' }],
+      },
+    ];
 
+    describe('#getAll', () => {
+      it('should return clothes items and items info', async () => {
         const tests = [
+          {
+            args: ['timberland smugglers 8', '', '', '', 1],
+            expected: [expected[1]],
+          },
           {
             args: ['', '', '', 'name-asc', 1],
             expected: [expected[0], expected[1], expected[2]],
@@ -244,122 +245,140 @@ describe('CatalogService and /api/catalog route Tests', () => {
             args: ['dress', 'Bar', '44', '', 1],
             expected: [],
           },
-          {
-            args: ['timberland smugglers 8', '', '', '', 1],
-            expected: [expected[1]],
-          },
         ];
 
         tests.forEach(async (test) => {
           // @ts-ignore
           const catalog = new CatalogService(test.args[0], test.args[1], test.args[2], test.args[3], test.args[4]);
           const result = await catalog.getLimit();
-          try {
-            expect(result).to.eql(test.expected);
-          } catch (e) {
-            return done(e);
-          }
+          expect(result).to.eql(test.expected);
         });
-
-        done();
       });
     });
 
     describe('# GET /api/catalog', () => {
-      it("responds with json", (done) => {
+      it('responds with json', (done) => {
         server
-        .get('/api/catalog')
-        .expect("Content-type",/json/)
-        .expect(200)
-        .end((err,res) => {
-          if (err) return done(err);
-          done();
-        });
+          .get('/api/catalog')
+          .expect('Content-type', /json/)
+          .expect(200)
+          .end((err, res) => {
+            expect(res.body.items).to.eql(expected);
+            if (err) return done(err);
+            done();
+          });
       });
 
-      it("keyword validation check (should responds with 404)", (done) => {
+      it('keyword validation check (should responds with 200 and empty items arr)', (done) => {
         server
-        .get('/api/catalog')
-        .query({ keyword:'下午好' })
-        .expect(404)
-        .end((err,res) => {
-          if (err) return done(err);
-          done();
-        });
+          .get('/api/catalog')
+          .query({ keyword: '下午好' })
+          .expect(200)
+          .end((err, res) => {
+            expect(res.body.items).to.eql([]);
+            if (err) return done(err);
+            done();
+          });
       });
 
-      it("fulltext index name check (should responds with json)", (done) => {
+      it('fulltext index name check (should responds with json)', (done) => {
         server
-        .get('/api/catalog')
-        .query({ keyword: 'timberland smugglers 8' })
-        .expect(200)
-        .end((err,res) => {
-          if (err) return done(err);
-          done();
-        });
+          .get('/api/catalog')
+          .query({ keyword: 'timberland smugglers 8' })
+          .expect(200)
+          .end((err, res) => {
+            expect(res.body.items).to.eql([expected[1]]);
+            if (err) return done(err);
+            done();
+          });
       });
 
-      it("brand validation check (should responds with 404)", (done) => {
+      it('brand validation check (should responds with 200 and empty items arr)', (done) => {
         server
-        .get('/api/catalog')
-        .query({ brand: "Walsh-ash, Aufderhar and O'Stale" })
-        .expect(404)
-        .end((err,res) => {
-          if (err) return done(err);
-          done();
-        });
+          .get('/api/catalog')
+          .query({ brand: "Walsh-ash, Aufderhar and O'Stale" })
+          .expect(200)
+          .end((err, res) => {
+            expect(res.body.items).to.eql([]);
+            if (err) return done(err);
+            done();
+          });
       });
 
-      it("sort validation check (should responds with 422)", (done) => {
+      it('sort validation check (should responds with 422)', (done) => {
         server
-        .get('/api/catalog')
-        .query({ sort:'name' })
-        .expect(422)
-        .end((err,res) => {
-          if (err) return done(err);
-          done();
-        });
+          .get('/api/catalog')
+          .query({ sort: 'name' })
+          .expect(422)
+          .end((err, res) => {
+            expect(res.body).to.eql([
+              {
+                value: 'name',
+                msg: 'Sort must be default, name-asc or name-desc',
+                param: 'sort',
+                location: 'query',
+              },
+            ]);
+            if (err) return done(err);
+            done();
+          });
       });
 
-      it("page validation check (should responds with 422)", (done) => {
+      it('page validation check (should responds with 422)', (done) => {
         server
-        .get('/api/catalog')
-        .query({ page:0 })
-        .expect(422)
-        .end((err,res) => {
-          if (err) return done(err);
-          done();
-        });
+          .get('/api/catalog')
+          .query({ page: 0 })
+          .expect(422)
+          .end((err, res) => {
+            expect(res.body).to.eql([
+              {
+                value: '0',
+                msg: 'Page must be numeric and start from 1',
+                param: 'page',
+                location: 'query',
+              },
+            ]);
+            if (err) return done(err);
+            done();
+          });
       });
 
-      it("page validation check (should responds with 422)", (done) => {
+      it('page validation check (should responds with 422)', (done) => {
         server
-        .get('/api/catalog')
-        .query({ page:'nmn' })
-        .expect(422)
-        .end((err,res) => {
-          if (err) return done(err);
-          done();
-        });
+          .get('/api/catalog')
+          .query({ page: 'nmn' })
+          .expect(422)
+          .end((err, res) => {
+            expect(res.body).to.eql([
+              {
+                value: 'nmn',
+                msg: 'Page must be numeric and start from 1',
+                param: 'page',
+                location: 'query',
+              },
+            ]);
+            if (err) return done(err);
+            done();
+          });
       });
-  
-      it("should return 404", async () => {
-        await mysql.connect();
-        const connection = await getConnection();
+
+      it('should return 200 and empty items arr', async () => {
         await connection.manager.getRepository(Brands).delete({});
         await connection.manager.getRepository(Types).delete({});
         await connection.manager.getRepository(Clothes).delete({});
-  
-        server
-        .get('/api/catalog')
-        .expect(404);
+        await connection.manager.getRepository(Sizes).delete({});
+        await connection.manager.getRepository(ClothSize).delete({});
+
+        return server
+          .get('/api/catalog')
+          .expect(200)
+          .then((res) => {
+            expect(res.body.items).to.eql([]);
+          });
       });
     });
 
-    after(async () => {
-      await mysql.connect();
-      const connection = await getConnection();
-
+    afterEach(async () => {
       await connection.manager.getRepository(Brands).delete({});
       await connection.manager.getRepository(Types).delete({});
       await connection.manager.getRepository(Clothes).delete({});
