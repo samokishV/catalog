@@ -17,7 +17,7 @@ export const connect = async () => {
     connection = await createConnection({
       name: 'default',
       type: 'mysql',
-      host: process.env.DB_HOST,
+      host: process.env.DB_HOST,    
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
@@ -31,7 +31,9 @@ export const connect = async () => {
         ClothSize,
         TypeToSize,
       ],
-    }).catch(err => console.log(err));
+    })
+    .then(result => console.log('Sucessfully connect to db'))
+    .catch(err => console.log(err));
   }
   return connection;
 };

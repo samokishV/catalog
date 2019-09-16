@@ -80,7 +80,7 @@ describe('BrandService and /api/brands route Tests', async () => {
         .get('/api/brands')
         .expect('Content-type', /json/)
         .expect(200)
-        .end((err, res) => {
+        .end((err:any, res:supertest.Response) => {
           expect(res.body).to.eql(expected);
           if (err) return done(err);
           done();

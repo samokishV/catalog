@@ -35,7 +35,7 @@ export const index = async (req: Request, res: Response) => {
       const paginator = bootstrapPagination.create('/catalog/search', page, 15, data.total, params);
       paginationHTML = paginator.render();
 
-      items.forEach((element) => {
+      items.forEach((element: any) => {
         element.sizes = _.sortBy(element.sizes, 'value');
       });
     }

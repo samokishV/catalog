@@ -17,7 +17,7 @@ export const create = function (prelink: string, current: number, rowsPerPage: n
     rowsPerPage,
     totalResult,
     slashSeparator: true,
-    template(result) {
+    template(result:any) {
       let i; let len; let
         prelink;
       let html = '<div><ul class="pagination">';

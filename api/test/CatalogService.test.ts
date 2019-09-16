@@ -262,7 +262,7 @@ describe('CatalogService and /api/catalog route Tests', () => {
           .get('/api/catalog')
           .expect('Content-type', /json/)
           .expect(200)
-          .end((err, res) => {
+          .end((err: any, res: supertest.Response) => {
             expect(res.body.items).to.eql(expected);
             if (err) return done(err);
             done();
@@ -274,7 +274,7 @@ describe('CatalogService and /api/catalog route Tests', () => {
           .get('/api/catalog')
           .query({ keyword: '下午好' })
           .expect(200)
-          .end((err, res) => {
+          .end((err: any, res: supertest.Response) => {
             expect(res.body.items).to.eql([]);
             if (err) return done(err);
             done();
@@ -286,7 +286,7 @@ describe('CatalogService and /api/catalog route Tests', () => {
           .get('/api/catalog')
           .query({ keyword: 'timberland smugglers 8' })
           .expect(200)
-          .end((err, res) => {
+          .end((err:any, res: supertest.Response) => {
             expect(res.body.items).to.eql([expected[1]]);
             if (err) return done(err);
             done();
@@ -298,7 +298,7 @@ describe('CatalogService and /api/catalog route Tests', () => {
           .get('/api/catalog')
           .query({ brand: "Walsh-ash, Aufderhar and O'Stale" })
           .expect(200)
-          .end((err, res) => {
+          .end((err:any, res:supertest.Response) => {
             expect(res.body.items).to.eql([]);
             if (err) return done(err);
             done();
@@ -310,7 +310,7 @@ describe('CatalogService and /api/catalog route Tests', () => {
           .get('/api/catalog')
           .query({ sort: 'name' })
           .expect(422)
-          .end((err, res) => {
+          .end((err:any, res:supertest.Response) => {
             expect(res.body).to.eql([
               {
                 value: 'name',
@@ -329,7 +329,7 @@ describe('CatalogService and /api/catalog route Tests', () => {
           .get('/api/catalog')
           .query({ page: 0 })
           .expect(422)
-          .end((err, res) => {
+          .end((err:any, res:supertest.Response) => {
             expect(res.body).to.eql([
               {
                 value: '0',
@@ -348,7 +348,7 @@ describe('CatalogService and /api/catalog route Tests', () => {
           .get('/api/catalog')
           .query({ page: 'nmn' })
           .expect(422)
-          .end((err, res) => {
+          .end((err:any, res:supertest.Response) => {
             expect(res.body).to.eql([
               {
                 value: 'nmn',

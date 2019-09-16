@@ -15,9 +15,9 @@ export const findAll = () => {
   const method = 'GET';
   return requestify
     .request(url, { method })
-    .then(response => response.getBody())
+    .then((response:any) => response.getBody())
     .catch(
-      (err) => {
+      (err:any) => {
         logger.debug(err);
         logger.error(`Error finding brands: url ${url} method ${method} in Brand.findAll`);
       },

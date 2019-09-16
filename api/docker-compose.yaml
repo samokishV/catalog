@@ -1,0 +1,70 @@
+version: '2.2'
+
+services:
+  db:
+    image: mysql:5.7
+    restart: always
+    command: --max_allowed_packet=32505856 --character-set-server=utf8 --collation-server=utf8_general_ci
+    environment:
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: 'password'
+    healthcheck:
+      test: "/usr/bin/mysql --user=root --password=password --execute \"use ${DB_NAME};\""  
+    ports:
+      # <Port exposed> : < MySQL Port running inside container>
+      - '3308:3306'
+    expose:
+      # Opens port 3306 on the container
+      - '3306'
+
+  test-db:
+    image: mysql:5.7
+    restart: always
+    command: --character-set-server=utf8 --collation-server=utf8_general_ci
+    environment:
+      MYSQL_DATABASE: ${TEST_DB_NAME}
+      MYSQL_USER: ${TEST_DB_USERNAME}
+      MYSQL_PASSWORD: ${TEST_DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: 'password'
+    healthcheck:
+      test: "/usr/bin/mysql --user=root --password=password --execute \"use ${TEST_DB_NAME};\""  
+    ports:
+      # <Port exposed> : < MySQL Port running inside container>
+      - '3307:3306'
+    expose:
+      # Opens port 3306 on the container
+      - '3306' 
+  
+  myapi:
+    container_name: myapi
+    build:
+        context: .
+        dockerfile: Dockerfile
+    ports:
+        - "${HOST}:${PORT}:${PORT}"
+    expose:
+        - "${PORT}"
+        - "${TEST_PORT}"    
+    links:
+      - db:db
+      - test-db:test-db
+    depends_on:
+      db:
+        condition: service_healthy
+      test-db:
+        condition: service_healthy 
+    environment:
+      DB_HOST: db
+      TEST_DB_HOST: test-db  
+    command:  
+        - /bin/sh
+        - -c
+        - |
+          ./node_modules/.bin/knex --knexfile ./knexfile-test.js migrate:latest
+          npm start
+
+networks:
+  api_default:
+ 

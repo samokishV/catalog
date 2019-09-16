@@ -1,4 +1,4 @@
-export const equal = (lvalue, rvalue, options) => {
+export const equal = (lvalue:any, rvalue:any, options:any) => {
   if (lvalue !== rvalue) {
     return options.inverse(this);
   }

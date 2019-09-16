@@ -1,0 +1,21 @@
+version: '3.3'
+
+services:
+  myapp:
+    build:
+        context: .
+        dockerfile: Dockerfile
+    ports:
+        - "${HOST}:${PORT}:${PORT}"
+    expose:
+        - "${PORT}"    
+    environment:
+      NODE_ENV: development
+      PORT: ${PORT}
+    command: ["npm", "start"]
+
+
+networks:
+    default:
+        external:
+            name: api_default
