@@ -1,6 +1,5 @@
 import { Response, Request } from 'express';
-
-import BrandService = require('../services/BrandService');
+import * as BrandService from '../services/BrandService';
 
 /**
  * @swagger

@@ -12,8 +12,8 @@ services:
     environment:
       NODE_ENV: development
       PORT: ${PORT}
+      API_BASE_URL: http://myapi:${API_PORT}
     command: ["npm", "start"]
-
 
 networks:
     default:

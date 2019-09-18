@@ -1,7 +1,6 @@
 import { Connection, createConnection, getConnection } from 'typeorm';
-
-import express = require('express');
-import route = require('./route');
+import express from 'express';
+import * as route from './route';
 
 const config = require('./knexfile-test');
 const knex = require('knex')(config);

@@ -10,8 +10,7 @@ import { TypeToSize } from '../src/models/TypeToSizes';
 import {
   initConnectDB, initServer, close, disconnect,
 } from '../setup';
-
-import TypeSizesService = require('../src/services/TypeSizesService');
+import * as TypeSizesService from '../src/services/TypeSizesService';
 
 dotenv.config({ path: '.env' });
 

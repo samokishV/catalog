@@ -12,9 +12,8 @@ import { Brands } from '../src/models/Brands';
 import {
   initConnectDB, initServer, close, disconnect,
 } from '../setup';
-
-import chai = require('chai');
-import chaiAsPromised = require('chai-as-promised');
+import chai from 'chai';
+import chaiAsPromised from 'chai-as-promised';
 
 chai.use(chaiAsPromised);
 

@@ -1,14 +1,13 @@
 import { swaggerSpec } from './swaggerSpec';
 import { options } from './swaggerDocument';
-
-import express = require('express');
-import bodyParser = require('body-parser');
-import CatalogController = require('./src/controllers/CatalogController');
-import TypesSizesController = require('./src/controllers/TypesSizesController');
-import BrandsController = require('./src/controllers/BrandsController');
-import MainController = require('./src/controllers/MainController');
-import swaggerUi = require('swagger-ui-express');
-import SearchCatalogRequest = require('./src/requests/searchCatalogRequest');
+import express from 'express';
+import bodyParser from 'body-parser';
+import * as CatalogController from './src/controllers/CatalogController';
+import * as TypesSizesController from './src/controllers/TypesSizesController';
+import * as BrandsController from './src/controllers/BrandsController';
+import * as MainController from './src/controllers/MainController';
+import swaggerUi from 'swagger-ui-express';
+import * as SearchCatalogRequest from './src/requests/searchCatalogRequest';
 
 const { RouteManager } = require('express-shared-routes');
 const listEndpoints = require('express-list-endpoints');

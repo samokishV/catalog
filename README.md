@@ -1,13 +1,22 @@
 ## Docker installation 
 
-cd to api folder and run the container
+cd to api folder, create config from example and adjust it, run the container
 ```
 # cd api
+# cp .env.example .env
 # sudo docker-compose up --build
 ```
-cd to app folder and run the container
+run migrations and seeds
+```
+# sudo docker exec -it myapi /bin/bash
+# ./node_modules/.bin/knex migrate:latest
+# ./node_modules/.bin/knex seed:run
+```
+
+cd to app folder, create config from example and adjust it and run the container
 ```
 # cd ../app
+# cp .env.example .env
 # sudo docker-compose up --build
 ```
 

@@ -1,6 +1,5 @@
 import { Response, Request } from 'express';
-
-import MainService = require('../services/MainService');
+import * as MainService from '../services/MainService';
 
 /**
  * @swagger

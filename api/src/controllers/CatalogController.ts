@@ -1,5 +1,4 @@
 import { Response, Request } from 'express';
-
 import { validationResult } from 'express-validator';
 import { CatalogService } from '../services/CatalogService';
 

@@ -8,8 +8,7 @@ import { Brands } from '../src/models/Brands';
 import {
   initConnectDB, initServer, close, disconnect,
 } from '../setup';
-
-import BrandService = require('../src/services/BrandService');
+import * as BrandService from '../src/services/BrandService';
 
 dotenv.config({ path: '.env' });
 

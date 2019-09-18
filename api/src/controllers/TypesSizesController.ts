@@ -1,6 +1,5 @@
 import { Response, Request } from 'express';
-
-import TypesSizesService = require('../services/TypeSizesService');
+import * as TypesSizesService from '../services/TypeSizesService';
 
 /**
  * @swagger

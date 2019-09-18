@@ -1,12 +1,12 @@
 import * as dotenv from 'dotenv';
 
 import { createConnections, Connection, createConnection, getConnection } from 'typeorm';
-import { Clothes } from './src/models/Clothes';
-import { Brands } from './src/models/Brands';
-import { Types } from './src/models/Types';
-import { Sizes } from './src/models/Sizes';
-import { ClothSize } from './src/models/ClothSizes';
-import { TypeToSize } from './src/models/TypeToSizes';
+import { Clothes } from '../models/Clothes';
+import { Brands } from '../models/Brands';
+import { Types } from '../models/Types';
+import { Sizes } from '../models/Sizes';
+import { ClothSize } from '../models/ClothSizes';
+import { TypeToSize } from '../models/TypeToSizes';
 
 dotenv.config({ path: '.env' });
 
