@@ -84,7 +84,15 @@ export class CatalogService {
    */
   getWhereKeywordQuery(subQuery: SelectQueryBuilder<Clothes>): SelectQueryBuilder<Clothes> | void {
     if (this.keyword) {
-      return subQuery.andWhere(`( MATCH(clothes.name) AGAINST ('${this.keyword}') OR brand.name like :name OR type.name like :name )`, { name: `%${this.keyword}%` });
+      this.keyword = this.keyword.trim();
+      let words = this.keyword.split(' ');
+
+      words.forEach((word, i, arr) => {
+        arr[i] = "clothes.name like '%" + word + "%'";
+      });
+
+      const nameSearchString = words.join(' AND ');
+      return subQuery.andWhere(`((${nameSearchString}) OR brand.name like :name OR type.name like :name )`, { name: `%${this.keyword}%` });
     }
   }
 
