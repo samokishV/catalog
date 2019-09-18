@@ -1,4 +1,4 @@
-import { endpoints } from '../../route';
+import { endpoints } from '../route';
 
 /**
  * @return {Array<object>}

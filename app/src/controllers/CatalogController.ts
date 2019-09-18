@@ -5,7 +5,7 @@ const { validationResult } = require('express-validator');
 import Catalog = require('../models/Catalog');
 import Brand = require('../models/Brand');
 import TypeSize = require('../models/TypeSize');
-import bootstrapPagination = require('../../helpers/bootstrapPagination');
+import bootstrapPagination = require('../helpers/bootstrapPagination');
 import _ = require('lodash');
 
 export const index = async (req: Request, res: Response) => {

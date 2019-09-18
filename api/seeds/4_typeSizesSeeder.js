@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { typeSizes } = require('../seedsData.js');
+const { typeSizes } = require('./data/seedsData.js');
 
 exports.seed = async function (knex, Promise) {
   const fakeTypeSizes = [];

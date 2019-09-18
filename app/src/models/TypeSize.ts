@@ -1,5 +1,5 @@
 import * as dotenv from 'dotenv';
-import { logger } from '../../logger';
+import { logger } from '../logger';
 
 const requestify = require('requestify');
 

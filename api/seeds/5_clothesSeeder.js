@@ -1,6 +1,5 @@
 const _ = require('lodash');
 const faker = require('faker');
-const { typeSizes } = require('../seedsData.js');
 
 exports.seed = async function (knex, Promise) {
   const fakeClothes = [];

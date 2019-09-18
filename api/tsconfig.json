@@ -18,6 +18,6 @@
         }
     },
     "include": [
-        "src/**/*", "src/services/connection.ts"
+        "src/**/*", "src/services/connection.ts", "knexfile.js"
     ]
 }

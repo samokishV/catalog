@@ -6,7 +6,7 @@ dotenv.config({ path: '.env' });
 
 log4js.configure({
   appenders: {
-    production: { type: 'file', filename: 'app.log', level: 'error' },
+    production: { type: 'file', filename: '../app.log', level: 'error' },
     deb: { type: 'console', level: 'debug' },
     err: { type: 'console', level: 'error' },
   },

@@ -7,7 +7,7 @@ import { Connection } from 'typeorm';
 import { Brands } from '../src/models/Brands';
 import {
   initConnectDB, initServer, close, disconnect,
-} from '../setup';
+} from './setup';
 import * as BrandService from '../src/services/BrandService';
 
 dotenv.config({ path: '.env' });

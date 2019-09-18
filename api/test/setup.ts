@@ -1,10 +1,10 @@
 import { Connection, createConnection, getConnection } from 'typeorm';
 import express from 'express';
-import * as route from './route';
+import * as route from '../src/route';
 
+const config = require('../knexfile-test');
 const knex = require('knex')(config);
 const knexCleaner = require('knex-cleaner');
-const config = require('./knexfile-test');
 
 // @ts-ignore
 let server;

@@ -3,11 +3,11 @@ import bodyParser from 'body-parser';
 import swaggerUi from 'swagger-ui-express';
 import { swaggerSpec } from './swaggerSpec';
 import { options } from './swaggerDocument';
-import * as CatalogController from './src/controllers/CatalogController';
-import * as TypesSizesController from './src/controllers/TypesSizesController';
-import * as BrandsController from './src/controllers/BrandsController';
-import * as MainController from './src/controllers/MainController';
-import * as SearchCatalogRequest from './src/requests/searchCatalogRequest';
+import * as CatalogController from './controllers/CatalogController';
+import * as TypesSizesController from './controllers/TypesSizesController';
+import * as BrandsController from './controllers/BrandsController';
+import * as MainController from './controllers/MainController';
+import * as SearchCatalogRequest from './requests/searchCatalogRequest';
 
 const { RouteManager } = require('express-shared-routes');
 const listEndpoints = require('express-list-endpoints');

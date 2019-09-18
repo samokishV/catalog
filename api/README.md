@@ -16,10 +16,9 @@ Run migrations and seeds.
 
 ## Running tests
 
-Change DB_NAME in config .env
 Run migrations and tests.
 
 ```
-# knex migrate:latest
+# knex migrate:latest --knexfile ./knexfile-test.js
 # npm test
 ```

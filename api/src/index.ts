@@ -1,5 +1,5 @@
 import express from 'express';
-import * as mysql from './src/services/connection';
+import * as mysql from './services/connection';
 
 import * as route from './route';
 

@@ -13,7 +13,7 @@ import { Sizes } from '../src/models/Sizes';
 import { Brands } from '../src/models/Brands';
 import {
   initConnectDB, initServer, close, disconnect,
-} from '../setup';
+} from './setup';
 
 chai.use(chaiAsPromised);
 
