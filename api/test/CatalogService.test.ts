@@ -3,6 +3,8 @@ import 'mocha';
 import { Connection } from 'typeorm';
 import * as dotenv from 'dotenv';
 import supertest from 'supertest';
+import chai from 'chai';
+import chaiAsPromised from 'chai-as-promised';
 import { Clothes } from '../src/models/Clothes';
 import { ClothSize } from '../src/models/ClothSizes';
 import { CatalogService } from '../src/services/CatalogService';
@@ -12,8 +14,6 @@ import { Brands } from '../src/models/Brands';
 import {
   initConnectDB, initServer, close, disconnect,
 } from '../setup';
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 
 chai.use(chaiAsPromised);
 
@@ -285,7 +285,7 @@ describe('CatalogService and /api/catalog route Tests', () => {
           .get('/api/catalog')
           .query({ keyword: 'timberland smugglers 8' })
           .expect(200)
-          .end((err:any, res: supertest.Response) => {
+          .end((err: any, res: supertest.Response) => {
             expect(res.body.items).to.eql([expected[1]]);
             if (err) return done(err);
             done();
@@ -297,7 +297,7 @@ describe('CatalogService and /api/catalog route Tests', () => {
           .get('/api/catalog')
           .query({ brand: "Walsh-ash, Aufderhar and O'Stale" })
           .expect(200)
-          .end((err:any, res:supertest.Response) => {
+          .end((err: any, res: supertest.Response) => {
             expect(res.body.items).to.eql([]);
             if (err) return done(err);
             done();
@@ -309,7 +309,7 @@ describe('CatalogService and /api/catalog route Tests', () => {
           .get('/api/catalog')
           .query({ sort: 'name' })
           .expect(422)
-          .end((err:any, res:supertest.Response) => {
+          .end((err: any, res: supertest.Response) => {
             expect(res.body).to.eql([
               {
                 value: 'name',
@@ -328,7 +328,7 @@ describe('CatalogService and /api/catalog route Tests', () => {
           .get('/api/catalog')
           .query({ page: 0 })
           .expect(422)
-          .end((err:any, res:supertest.Response) => {
+          .end((err: any, res: supertest.Response) => {
             expect(res.body).to.eql([
               {
                 value: '0',
@@ -347,7 +347,7 @@ describe('CatalogService and /api/catalog route Tests', () => {
           .get('/api/catalog')
           .query({ page: 'nmn' })
           .expect(422)
-          .end((err:any, res:supertest.Response) => {
+          .end((err: any, res: supertest.Response) => {
             expect(res.body).to.eql([
               {
                 value: 'nmn',

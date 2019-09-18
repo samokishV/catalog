@@ -1,12 +1,12 @@
-import { swaggerSpec } from './swaggerSpec';
-import { options } from './swaggerDocument';
 import express from 'express';
 import bodyParser from 'body-parser';
+import swaggerUi from 'swagger-ui-express';
+import { swaggerSpec } from './swaggerSpec';
+import { options } from './swaggerDocument';
 import * as CatalogController from './src/controllers/CatalogController';
 import * as TypesSizesController from './src/controllers/TypesSizesController';
 import * as BrandsController from './src/controllers/BrandsController';
 import * as MainController from './src/controllers/MainController';
-import swaggerUi from 'swagger-ui-express';
 import * as SearchCatalogRequest from './src/requests/searchCatalogRequest';
 
 const { RouteManager } = require('express-shared-routes');

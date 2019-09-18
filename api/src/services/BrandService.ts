@@ -9,8 +9,8 @@ export const getAll = async () => {
   const BrandsRepository = await connection.getRepository(Brands);
   const data = await BrandsRepository.find({
     order: {
-      id: "ASC"
-    }
+      id: 'ASC',
+    },
   });
 
   return data;

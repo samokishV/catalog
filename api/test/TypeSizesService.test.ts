@@ -94,7 +94,7 @@ describe('TypeSizesService and /api/types/sizes route Tests', () => {
         .expect('Content-type', /json/)
         .expect(200)
         .expect(expected)
-        .end((err:any, res:supertest.Response) => {
+        .end((err: any, res: supertest.Response) => {
           if (err) return done(err);
           done();
         });

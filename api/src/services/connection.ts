@@ -1,6 +1,8 @@
 import * as dotenv from 'dotenv';
 
-import { createConnections, Connection, createConnection, getConnection } from 'typeorm';
+import {
+  createConnections, Connection, createConnection, getConnection,
+} from 'typeorm';
 import { Clothes } from '../models/Clothes';
 import { Brands } from '../models/Brands';
 import { Types } from '../models/Types';
@@ -17,7 +19,7 @@ export const connect = async () => {
     connection = await createConnection({
       name: 'default',
       type: 'mysql',
-      host: process.env.DB_HOST,    
+      host: process.env.DB_HOST,
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
@@ -32,10 +34,8 @@ export const connect = async () => {
         TypeToSize,
       ],
     })
-    .then(result => console.log('Sucessfully connect to db'))
-    .catch(err => console.log(err));
+      .then(result => console.log('Sucessfully connect to db'))
+      .catch(err => console.log(err));
   }
   return connection;
 };
-
-

@@ -11,5 +11,5 @@ module.exports = {
   },
   migrations: {
     directory: `${__dirname}/migrations`,
-  }
+  },
 };

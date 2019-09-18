@@ -20,7 +20,7 @@ export const findAll = (page: number, params: string) => {
     .request(url, { method })
     .then((response: any) => response.getBody())
     .catch(
-      (err:any) => {
+      (err: any) => {
         logger.debug(err);
         logger.error(`Error finding clothes: url ${url} method ${method} in Catalog.findAll`);
       },

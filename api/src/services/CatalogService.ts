@@ -17,11 +17,11 @@ export class CatalogService {
 
   sort = 'default';
 
-  page: number = 1;
+  page = 1;
 
   total: number;
 
-  constructor() 
+  constructor()
 
   constructor(keyword: string, brand: string, size: string, sort: string, page: number)
 
@@ -85,10 +85,10 @@ export class CatalogService {
   getWhereKeywordQuery(subQuery: SelectQueryBuilder<Clothes>): SelectQueryBuilder<Clothes> | void {
     if (this.keyword) {
       this.keyword = this.keyword.trim();
-      let words = this.keyword.split(' ');
+      const words = this.keyword.split(' ');
 
       words.forEach((word, i, arr) => {
-        arr[i] = "clothes.name like '%" + word + "%'";
+        arr[i] = `clothes.name like '%${word}%'`;
       });
 
       const nameSearchString = words.join(' AND ');
@@ -140,7 +140,7 @@ export class CatalogService {
    * @return {Promise<number>}
    */
   async getTotal(): Promise<number> {
-    if(!this.total) {
+    if (!this.total) {
       await this.setTotal();
     }
     return this.total;
@@ -149,9 +149,9 @@ export class CatalogService {
   /**
    * @return {Promise<number>}
    */
-  async setTotal():Promise<number> {
+  async setTotal(): Promise<number> {
     let data;
-    if(this.keyword || this.brand || this.size) {
+    if (this.keyword || this.brand || this.size) {
       data = await this.getTotalWithConditions();
     } else {
       data = await this.getTotalWithoutConditions();
@@ -162,7 +162,7 @@ export class CatalogService {
   /**
    * @return {Promise<number>}
    */
-  getTotalWithConditions():Promise<number>  {
+  getTotalWithConditions(): Promise<number> {
     return createQueryBuilder('clothes', 'clothes')
       .select(['clothes.id', 'clothes.name', 'brand', 'type', 'sizes'])
       .innerJoin('clothes.brand', 'brand')
@@ -181,9 +181,9 @@ export class CatalogService {
   /**
    * @return {Promise<number>}
    */
-  async getTotalWithoutConditions():Promise<number>  {
+  async getTotalWithoutConditions(): Promise<number> {
     const catalogRepository = await getRepository(Clothes);
-    const data =  await catalogRepository.count();
+    const data = await catalogRepository.count();
     return data;
   }
 

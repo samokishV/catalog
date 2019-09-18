@@ -11,9 +11,9 @@ exports.seed = async function (knex, Promise) {
   for (let i = 0; fakeBrands.length < desiredFakeBrands; i++) {
     fakeBrand = createFakeBrand();
 
-    if(!fakeBrands.includes(fakeBrand))  {
+    if (!fakeBrands.includes(fakeBrand)) {
       fakeBrands.push(fakeBrand);
-    } 
+    }
   }
 
   await knex('brands')
