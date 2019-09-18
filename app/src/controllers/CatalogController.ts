@@ -15,7 +15,7 @@ export const index = async (req: Request, res: Response) => {
   const keyword = req.body.keyword || req.query.keyword;
   const brand = req.body.brand || req.query.brand;
   const size = req.body.size || req.query.size;
-  const sort = req.body.order || req.query.sort || 'default';
+  const sort = req.body.order || req.query.order || 'default';
 
   let params = '';
 
