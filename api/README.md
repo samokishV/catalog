@@ -10,8 +10,8 @@ Create config from example and adjust it.
 Run migrations and seeds.
 
 ```
-# knex migrate:latest
-# knex seed:run
+# knex migrate:latest --knexfile ./config/knexfile.js
+# knex seed:run --knexfile ./config/knexfile.js
 ```
 
 ## Running tests
@@ -19,6 +19,6 @@ Run migrations and seeds.
 Run migrations and tests.
 
 ```
-# knex migrate:latest --knexfile ./knexfile-test.js
+# knex migrate:latest --knexfile ./config/knexfile-test.js
 # npm test
 ```
