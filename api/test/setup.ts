@@ -2,9 +2,8 @@ import { Connection, createConnection, getConnection } from 'typeorm';
 import express from 'express';
 import * as route from '../src/route';
 
-const config = require('../knexfile-test');
+const config = require('../config/knexfile-test');
 const knex = require('knex')(config);
-const knexCleaner = require('knex-cleaner');
 
 // @ts-ignore
 let server;
@@ -52,7 +51,6 @@ export const initConnectDB = async () => {
 export const disconnect = async () => {
   if (connection) {
     await connection.close();
-    await knexCleaner.clean(knex);
 
     connection = null;
 

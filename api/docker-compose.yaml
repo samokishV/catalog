@@ -62,7 +62,7 @@ services:
         - /bin/sh
         - -c
         - |
-          ./node_modules/.bin/knex --knexfile ./knexfile-test.js migrate:latest
+          ./node_modules/.bin/knex --knexfile ./config/knexfile-test.js migrate:latest
           npm start
 
 networks:
