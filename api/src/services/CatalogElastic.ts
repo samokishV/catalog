@@ -51,7 +51,7 @@ export class CatalogElastic {
         from: offset,
         size: limit,
         body: {
-          _source: ['id', 'name', 'brand', 'cloth_type', 'value'],
+          _source: ['id', 'name', 'brand', 'type', 'sizes'],
           query,
           sort
         },
@@ -117,10 +117,10 @@ export class CatalogElastic {
           bool: {
             should: [
               {
-                match_phrase: { brand: this.keyword },
+                match_phrase: { "brand.name": this.keyword },
               },
               {
-                term: { cloth_type: this.keyword },
+                term: { "type.name": this.keyword },
               },
               {
                 bool: {
@@ -142,7 +142,7 @@ export class CatalogElastic {
     getWhereBrandQuery(): Record<string, any> {
       if (this.brand) {
         const brandQuery = {
-          match_phrase: { brand: this.brand },
+          match_phrase: { "brand.name": this.brand },
         };
         return brandQuery;
       }
@@ -155,7 +155,7 @@ export class CatalogElastic {
     getWhereSizeQuery(): Record<string, any> {
       if (this.size) {
         const sizeQuery = {
-          term: { value: this.size },
+          term: { "sizes.value": this.size },
         };
         return sizeQuery;
       }
