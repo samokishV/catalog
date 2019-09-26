@@ -1,5 +1,5 @@
 import { Response, Request } from 'express';
-import * as TypesSizesService from '../services/TypeSizesService';
+import * as TypesSizesService from '../services/TypeSizesElastic';
 
 /**
  * @swagger

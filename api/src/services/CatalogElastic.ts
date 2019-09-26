@@ -1,14 +1,4 @@
-import elastic from 'elasticsearch';
-
-import * as dotenv from 'dotenv';
-
-dotenv.config({ path: '.env' });
-
-const elasticHost = process.env.ELASTIC_HOST;
-
-export const client = new elastic.Client({
-  host: `${elasticHost}:9200`,
-});
+import { client } from './client';
 
 const itemsOnPage = 15;
 
@@ -135,7 +125,6 @@ export class CatalogElastic {
       }
     }
 
-
     /**
      * @return {Object}
      */
@@ -148,14 +137,13 @@ export class CatalogElastic {
       }
     }
 
-
     /**
      * @return {Object}
      */
     getWhereSizeQuery(): Record<string, any> {
       if (this.size) {
         const sizeQuery = {
-          term: { "sizes.value": this.size },
+          term: { "sizes.value.keyword": this.size },
         };
         return sizeQuery;
       }
@@ -172,7 +160,7 @@ export class CatalogElastic {
     }
 
     /**
-     * @return {Promise<number>}
+     * @return {Promise<void>}
      */
     async setTotal(): Promise<void> {
       const data = await this.countTotal();

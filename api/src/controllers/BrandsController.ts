@@ -1,5 +1,5 @@
 import { Response, Request } from 'express';
-import * as BrandService from '../services/BrandService';
+import * as BrandService from '../services/BrandsElastic';
 
 /**
  * @swagger

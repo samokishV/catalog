@@ -1,6 +1,6 @@
 import { Response, Request } from 'express';
 import { validationResult } from 'express-validator';
-import { CatalogService } from '../services/CatalogService';
+import  { CatalogElastic as CatalogService }  from '../services/CatalogElastic';
 
 /**
  * @swagger
@@ -54,6 +54,7 @@ export const index = async (req: Request, res: Response) => {
   const { keyword } = req.query;
   const { brand } = req.query;
   const { size } = req.query;
+
   const catalog = new CatalogService(keyword, brand, size, sort, page);
   const items = await catalog.getLimit();
   const total = await catalog.getTotal();
