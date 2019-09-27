@@ -1,5 +1,5 @@
 $(document).ready(() => {
-  $("[name='order']").on('change', () => {
+  $("[name='sort']").on('change', () => {
     document.forms.search.submit();
   });
 });

@@ -7,10 +7,10 @@
             <form action="/catalog/search" method="get" name="search" class="search-form needs-validation" novalidate>
                 <div class="form-group">
                     <label for="brand">Order by: </label>
-                    <select class="form-control" id="order" name="order">
-                        <option value="default" {{#equal order "default"}} selected {{/equal}}>Default</option>
-                        <option value="name-asc" {{#equal order "name-asc"}} selected {{/equal}}>Name A-Z</option>
-                        <option value="name-desc" {{#equal order "name-desc"}} selected {{/equal}}>Name Z-A</option>
+                    <select class="form-control" id="sort" name="sort">
+                        <option value="default" {{#equal sort "default"}} selected {{/equal}}>Default</option>
+                        <option value="name-asc" {{#equal sort "name-asc"}} selected {{/equal}}>Name A-Z</option>
+                        <option value="name-desc" {{#equal sort "name-desc"}} selected {{/equal}}>Name Z-A</option>
                     </select>
                 </div>
                 <div class="form-group">
