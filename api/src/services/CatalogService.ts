@@ -1,8 +1,10 @@
 import {
-  createQueryBuilder, OrderByCondition, SelectQueryBuilder, getRepository,
+  createQueryBuilder, OrderByCondition, SelectQueryBuilder, getRepository, Connection, getConnection,
 } from 'typeorm';
 import * as dotenv from 'dotenv';
 import { Clothes } from '../models/Clothes';
+import { Types } from '../models/Types';
+import _ from 'lodash';
 
 dotenv.config({ path: '.env' });
 
@@ -43,12 +45,15 @@ export class CatalogService {
    * @return {Promise<unknown[]>}
    */
   async getLimit(): Promise<unknown[]> {
+    const sortCondition = this.getSortCondition('clothes');
+
     const limit = itemsOnPage;
     const offset = (this.page - 1) * limit;
     const query = await this.getAllQuery();
-    const data = query
+    const data = await query
       .skip(offset)
       .take(limit)
+      .orderBy(sortCondition)
       .getMany();
 
     return data;
@@ -58,21 +63,23 @@ export class CatalogService {
    * @return {Promise<SelectQueryBuilder<unknown>>}
    */
   async getAllQuery(): Promise<SelectQueryBuilder<unknown>> {
-    const sortCondition = this.getSortCondition('clothes');
+    const connection = getConnection();
+    
+    const types = await getRepository(Types).find({ select: ["name"] });
+    const typesArr = _.map(types, 'name');
 
-    const query = await createQueryBuilder('clothes', 'clothes')
+    const query = await connection.manager
+      .createQueryBuilder('clothes', 'clothes')
       .select(['clothes.id', 'clothes.name', 'brand', 'type', 'sizes'])
       .innerJoin('clothes.brand', 'brand')
       .innerJoin('clothes.type', 'type')
       .leftJoin('clothes.sizes', 'sizes')
-      .where('1 = 1')
-      .andWhere((qb: SelectQueryBuilder<Clothes>): any => {
-        qb.where('1 = 1');
+      .where((qb: SelectQueryBuilder<Clothes>): any => {
+        qb.where('type.name in (:...types)', {types : typesArr});
         this.getWhereKeywordQuery(qb);
         this.getWhereBrandQuery(qb);
         this.getWhereSizeQueryWithSizes(qb);
-      })
-      .orderBy(sortCondition);
+      });
 
     return query;
   }
