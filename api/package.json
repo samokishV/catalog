@@ -21,11 +21,7 @@
     "@types/dotenv": "^6.1.1",
     "@types/elasticsearch": "^5.0.35",
     "@types/jest": "^24.0.17",
-<<<<<<< HEAD
-    "@types/lodash": "^4.14.138",
-=======
     "@types/lodash": "^4.14.141",
->>>>>>> c911fc7... Fix bug with sorting
     "@types/sinon": "^7.0.13",
     "@types/supertest": "^2.0.8",
     "@types/swagger-jsdoc": "^3.0.2",
