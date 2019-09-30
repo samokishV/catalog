@@ -6,12 +6,15 @@ const XRegExp = require('xregexp');
 
 export const validate = [
   check('keyword')
+    .trim()
     .matches(new XRegExp('^[\\pL 0-9]*$'))
     .withMessage('Keyword must be alphanumeric, and can contain underscores'),
   check('brand')
+    .trim()
     .matches(new XRegExp("^[\\pL 0-9 \\- \\, \\']*$"))
     .withMessage('Brand must be alphanumeric, and can contain underscores'),
   check('size')
+    .trim()
     .matches(new XRegExp('^([3][5-9]|[4][0-5]|[SML])*$'))
     .withMessage('Size must be in range 35-45 for shoes or S/M/L for dress'),
   check('sort')

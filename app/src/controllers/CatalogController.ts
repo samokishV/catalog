@@ -1,21 +1,19 @@
 import { Response, Request } from 'express';
-
-const { validationResult } = require('express-validator');
-
-import Catalog = require('../models/Catalog');
-import Brand = require('../models/Brand');
-import TypeSize = require('../models/TypeSize');
-import bootstrapPagination = require('../helpers/bootstrapPagination');
-import _ = require('lodash');
+import { validationResult } from 'express-validator';
+import * as Catalog from '../models/Catalog';
+import * as Brand from '../models/Brand';
+import * as TypeSize from '../models/TypeSize';
+import * as bootstrapPagination from '../helpers/bootstrapPagination';
+import _ from 'lodash';
 
 export const index = async (req: Request, res: Response) => {
   const errors = validationResult(req);
 
   const page = req.params.page || 1;
-  const keyword = req.body.keyword || req.query.keyword;
-  const brand = req.body.brand || req.query.brand;
-  const size = req.body.size || req.query.size;
-  const sort = req.body.sort || req.query.sort || 'default';
+  const keyword = req.query.keyword;
+  const brand = req.query.brand;
+  const size = req.query.size;
+  const sort = req.query.sort || 'default';
 
   let params = '';
 
@@ -53,6 +51,6 @@ export const index = async (req: Request, res: Response) => {
     brand,
     size,
     sort,
-    errors: errors.errors,
+    errors
   });
 };
