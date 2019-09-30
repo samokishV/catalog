@@ -23,6 +23,8 @@ export class CatalogService {
 
   total: number;
 
+  types: Types[];
+
   constructor()
 
   constructor(keyword: string, brand: string, size: string, sort: string, page: number)
@@ -64,9 +66,7 @@ export class CatalogService {
    */
   async getAllQuery(): Promise<SelectQueryBuilder<unknown>> {
     const connection = getConnection();
-    
-    const types = await getRepository(Types).find({ select: ["name"] });
-    const typesArr = _.map(types, 'name');
+    this.types = await getRepository(Types).find({ select: ["name"] });
 
     const query = await connection.manager
       .createQueryBuilder('clothes', 'clothes')
@@ -75,7 +75,7 @@ export class CatalogService {
       .innerJoin('clothes.type', 'type')
       .leftJoin('clothes.sizes', 'sizes')
       .where((qb: SelectQueryBuilder<Clothes>): any => {
-        qb.where('type.name in (:...types)', {types : typesArr});
+        this.getWhereTypesQuery(qb);
         this.getWhereKeywordQuery(qb);
         this.getWhereBrandQuery(qb);
         this.getWhereSizeQueryWithSizes(qb);
@@ -83,6 +83,19 @@ export class CatalogService {
 
     return query;
   }
+
+  /**
+   *
+   * @param {SelectQueryBuilder<Clothes>} subQuery
+   * @return {SelectQueryBuilder<Clothes>} | void
+   */
+  getWhereTypesQuery(subQuery: SelectQueryBuilder<Clothes>): SelectQueryBuilder<Clothes> | void {
+    const typesArr = _.map(this.types, 'name');
+
+    if(typesArr.length>0) {
+      return subQuery.where('type.name in (:...types)', {types : typesArr});
+    }
+  };
 
   /**
    *
