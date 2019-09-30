@@ -6,12 +6,12 @@ services:
     restart: always
     command: --max_allowed_packet=32505856 --character-set-server=utf8 --collation-server=utf8_general_ci
     environment:
-      MYSQL_DATABASE: ${DB_NAME}
-      MYSQL_USER: ${DB_USERNAME}
-      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: catalog
+      MYSQL_USER: samokish
+      MYSQL_PASSWORD: qwerty
       MYSQL_ROOT_PASSWORD: 'password'
     healthcheck:
-      test: "/usr/bin/mysql --user=root --password=password --execute \"use ${DB_NAME};\""  
+      test: "/usr/bin/mysql --user=root --password=password --execute \"use catalog;\""  
     ports:
       # <Port exposed> : < MySQL Port running inside container>
       - '3308:3306'
@@ -24,12 +24,12 @@ services:
     restart: always
     command: --character-set-server=utf8 --collation-server=utf8_general_ci
     environment:
-      MYSQL_DATABASE: ${TEST_DB_NAME}
-      MYSQL_USER: ${TEST_DB_USERNAME}
-      MYSQL_PASSWORD: ${TEST_DB_PASSWORD}
+      MYSQL_DATABASE: catalog_test
+      MYSQL_USER: samokish
+      MYSQL_PASSWORD: qwerty
       MYSQL_ROOT_PASSWORD: 'password'
     healthcheck:
-      test: "/usr/bin/mysql --user=root --password=password --execute \"use ${TEST_DB_NAME};\""  
+      test: "/usr/bin/mysql --user=root --password=password --execute \"use catalog_test;\""  
     ports:
       # <Port exposed> : < MySQL Port running inside container>
       - '3307:3306'
@@ -43,10 +43,10 @@ services:
         context: .
         dockerfile: Dockerfile
     ports:
-        - "${HOST}:${PORT}:${PORT}"
+        - "0.0.0.0:3000:3000"
     expose:
-        - "${PORT}"
-        - "${TEST_PORT}"    
+        - "3000"
+        - "3030"    
     links:
       - db:db
       - test-db:test-db
@@ -56,8 +56,18 @@ services:
       test-db:
         condition: service_healthy 
     environment:
+      HOST: 0.0.0.0
+      PORT: 3000
+      TEST_HOST: 0
+      TEST_PORT: 3030
       DB_HOST: db
-      TEST_DB_HOST: test-db  
+      DB_NAME: catalog
+      DB_USERNAME: samokish
+      DB_PASSWORD: qwerty
+      TEST_DB_HOST: test-db
+      TEST_DB_NAME: catalog_test 
+      TEST_DB_USERNAME: samokish
+      TEST_DB_PASSWORD: qwerty
     command:  
         - /bin/sh
         - -c
