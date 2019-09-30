@@ -6,6 +6,7 @@ import XRegExp = require('xregexp');
 
 export const validate = [
   check('keyword')
+    .trim()
     .matches(
       // @ts-ignore
       new XRegExp('^[\\pL 0-9]*$'),

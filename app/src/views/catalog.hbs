@@ -16,8 +16,8 @@
                 <div class="form-group">
                     <label for="keyword">Search</label>
                     <input type="text" class="form-control
-                    {{#if errors}}
-                        {{#each errors}}
+                    {{#if errors.errors}}
+                        {{#each errors.errors}}
                             {{#equal this.param 'keyword'}}
                                 is-invalid
                             {{/equal}}
