@@ -11,7 +11,14 @@ run migrations and seeds
 # ./node_modules/.bin/knex migrate:latest --knexfile ./config/knexfile.js
 # ./node_modules/.bin/knex seed:run --knexfile ./config/knexfile.js
 ```
+index data for Elastic
+```
+# sudo docker exec -it api_logstash_1 /bin/bash
+# bin/logstash -f /usr/share/logstash/config/logstash_docker/catalog_brands.conf --path.data=new_data
+# bin/logstash -f /usr/share/logstash/config/logstash_docker/catalog_clothes_denormal.conf --path.data=new_data
+# bin/logstash -f /usr/share/logstash/config/logstash_docker/catalog_type_sizes_denormal.conf --path.data=new_data
 
+```
 cd to app folder and run the container
 ```
 # cd ../app

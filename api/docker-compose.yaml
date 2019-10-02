@@ -36,12 +36,37 @@ services:
     expose:
       # Opens port 3306 on the container
       - '3306' 
-  
+
+  elasticsearch:
+    container_name: tqd-elasticsearch
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.0.1
+    environment:
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - discovery.type=single-node
+    logging:
+      driver: none
+    ports:
+      - 9302:9300
+      - 9202:9200 
+    expose:
+      - '9300'
+      - '9200' 
+      
+  logstash:
+    build:
+      context: .
+      dockerfile: ./docker/logstash/Dockerfile
+    links:
+      - elasticsearch 
+    depends_on:
+      - elasticsearch   
+
   myapi:
     container_name: myapi
     build:
         context: .
-        dockerfile: Dockerfile
+        dockerfile: ./docker/myapi/Dockerfile
     ports:
         - "0.0.0.0:3000:3000"
     expose:
@@ -55,10 +80,14 @@ services:
         condition: service_healthy
       test-db:
         condition: service_healthy 
+      elasticsearch:
+        condition: service_started 
+      logstash:
+        condition: service_started        
     environment:
       HOST: 0.0.0.0
       PORT: 3000
-      TEST_HOST: 0
+      TEST_HOST: 0.0.0.0
       TEST_PORT: 3030
       DB_HOST: db
       DB_NAME: catalog
@@ -68,6 +97,7 @@ services:
       TEST_DB_NAME: catalog_test 
       TEST_DB_USERNAME: samokish
       TEST_DB_PASSWORD: qwerty
+      ELASTIC_HOST: elasticsearch
     command:  
         - /bin/sh
         - -c
