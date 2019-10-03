@@ -1,6 +1,12 @@
 import { Connection, createConnection, getConnection } from 'typeorm';
 import express from 'express';
 import * as route from '../src/route';
+import { Types } from '../src/models/Types';
+import { Clothes } from '../src/models/Clothes';
+import { Brands } from '../src/models/Brands';
+import { Sizes } from '../src/models/Sizes';
+import { ClothSize } from '../src/models/ClothSizes';
+import { TypeToSize } from '../src/models/TypeToSizes';
 
 const config = require('../config/knexfile-test');
 const knex = require('knex')(config);
@@ -38,7 +44,12 @@ export const initConnectDB = async () => {
       synchronize: false,
       logging: false,
       entities: [
-        'src/models/*.ts',
+        Clothes,
+        Brands,
+        Types,
+        Sizes,
+        ClothSize,
+        TypeToSize,
       ],
     }).catch(err => console.log(err));
   }

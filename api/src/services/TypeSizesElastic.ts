@@ -19,6 +19,6 @@ export const getAll = async () => {
     },
   });
 
-  const results = data.hits.hits.map(i => i._source);
+  const results = data.hits.hits.map((i: { _source: any; }) => i._source);
   return results;
 };
