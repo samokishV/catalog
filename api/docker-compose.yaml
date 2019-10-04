@@ -38,7 +38,7 @@ services:
       - '3306' 
 
   elasticsearch:
-    container_name: tqd-elasticsearch
+    container_name: elasticsearch
     image: docker.elastic.co/elasticsearch/elasticsearch:7.0.1
     environment:
       - bootstrap.memory_lock=true
@@ -52,6 +52,22 @@ services:
     expose:
       - '9300'
       - '9200' 
+
+  elasticsearch-test:
+    container_name: elasticsearch-test
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.0.1
+    environment:
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - discovery.type=single-node
+    logging:
+      driver: none
+    ports:
+      - 9303:9300
+      - 9203:9200 
+    expose:
+      - '9300'
+      - '9200'     
       
   logstash:
     build:
@@ -59,8 +75,10 @@ services:
       dockerfile: ./docker/logstash/Dockerfile
     links:
       - elasticsearch 
+      - elasticsearch-test
     depends_on:
-      - elasticsearch   
+      - elasticsearch
+      - elasticsearch-test   
 
   myapi:
     container_name: myapi
@@ -98,6 +116,8 @@ services:
       TEST_DB_USERNAME: samokish
       TEST_DB_PASSWORD: qwerty
       ELASTIC_HOST: elasticsearch
+      ELASTIC_TEST_HOST: elasticsearch-test
+      ELASTIC_TEST_PORT: 9200
     command:  
         - /bin/sh
         - -c

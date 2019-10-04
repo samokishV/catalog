@@ -15,7 +15,10 @@ Run migrations and seeds.
 ```
 
 Download and unzip Elasticsearch
-Run bin/elasticsearch
+Run bin/elasticsearch -d
+Copy Elasticsearch folder
+Change port in config/elasticsearch.yml
+Run bin/elasticsearch -d
 
 Download and unzip Logstash 
 Change config files in ./config/logstash
