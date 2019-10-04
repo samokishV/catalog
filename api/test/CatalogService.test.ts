@@ -68,7 +68,7 @@ describe('/api/catalog route tests', () => {
         id: 1, name: 'ab tebo error', brand: [{ id: 1, name: 'Foo' }], type: [{ id: 1, name: 'shoes' }], sizes: [{ id: 1, value: '44' }, { id: 2, value: '45' }],
       },
       {
-        id: 2, name: 'tIMBERLAND© BOOT COMPANY 8-INCH SMUGGLERS NOTCH CAP TOE BOOTS', brand: [{ id: 2, name: 'Bar' }], type: [{ id: 1, name: 'shoes' }], sizes: [{ id: 2, value: '45' }],
+        id: 2, name: 'TIMBERLAND© BOOT COMPANY 8-INCH SMUGGLERS NOTCH CAP TOE BOOTS', brand: [{ id: 2, name: 'Bar' }], type: [{ id: 1, name: 'shoes' }], sizes: [{ id: 2, value: '45' }],
       },
       {
         id: 3, name: 'vivo la vivo', brand: [{ id: 1, name: 'Foo' }], type: [{ id: 2, name: 'dress' }], sizes: [{ id: 3, value: 'XL' }],

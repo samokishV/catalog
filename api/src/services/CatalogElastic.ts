@@ -250,19 +250,23 @@ export class CatalogElastic {
     getSortCondition(): Array<object> {
       const sortOptions = this.getSortParams();
       const sortField = sortOptions.field;
-      let field;
+      const sortType = sortOptions.type;
 
-      if(sortField=="name") {
-        field = `${sortField}.keyword`;
+      let sortCondition;
+
+      if(sortField == "name") {
+        sortCondition = [
+          {"_script": {
+            "script": "doc['name.keyword'].value.toLowerCase()",
+            "type": "string",
+            "order": sortType
+            }}
+        ];
       } else {
-        field = sortField;
+        sortCondition = [
+          { [sortField]: { order: sortType }}
+        ];
       }
-
-      const type = sortOptions.type;
-
-      const sortCondition = [
-        { [field]: { order: type }}
-      ];
 
       return sortCondition;
     }
