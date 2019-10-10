@@ -96,29 +96,14 @@ export class CatalogElastic {
     getWhereKeywordQuery(): Record<string, any> {
       if (this.keyword) {
         this.keyword = this.keyword.trim();
-        const words = this.keyword.split(' ');
-        const must: Array<Record<string, any>> = [];
-
-        words.forEach((word, i, arr) => {
-          must[i] = { term: { name: word } };
-        });
 
         const keywordQuery = {
-          bool: {
-            should: [
-              {
-                match_phrase: { "brand.name": this.keyword },
-              },
-              {
-                term: { "type.name": this.keyword },
-              },
-              {
-                bool: {
-                  must,
-                },
-              },
-            ],
-          },
+          multi_match: {
+            query: this.keyword, 
+            fields: [ "name", "brand.name", "type.name" ],
+            operator: "and",
+            fuzziness: "AUTO" 
+          }
         };
 
         return keywordQuery;
